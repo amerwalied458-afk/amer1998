@@ -155,9 +155,12 @@
         .media-box i { font-size: 28px; color: var(--gold); margin-bottom: 8px; }
         .media-box span { font-size: 10px; color: var(--text-muted); }
         .media-box.has-img { border-style: solid; border-color: var(--gold); }
-        .btn { width: 100%; padding: 20px; border-radius: 20px; font-size: 16px; font-weight: 900; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        /* --- تعديل الأزرار ليكون حجمها أكبر --- */
+        .btn { width: 100%; padding: 22px; border-radius: 20px; font-size: 18px; font-weight: 900; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-primary { background: var(--gold); color: #000; }
         .btn-secondary { background: var(--surface); color: #fff; border: 1px solid var(--border); }
+        
         .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 25px; }
         .action-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 15px 5px; text-align: center; cursor: pointer; }
         .action-card i { font-size: 22px; margin-bottom: 8px; display: block; }
@@ -197,6 +200,8 @@
     </style>
 </head>
 <body onload="bootSystem()">
+
+<datalist id="areas-list"></datalist>
 
 <div id="splash-screen">
     <div class="splash-visual">
@@ -350,7 +355,7 @@
         <div class="m-head"><h2>إضافة زبون جديد</h2><div class="close-btn" onclick="closeModal('addClientModal')"><i class="fas fa-times"></i></div></div>
         <div class="form-group"><label class="form-label">الاسم مثال ف1ص1</label><input type="text" id="add-name" class="form-input"></div>
         <div class="grid-2">
-            <div class="form-group"><label class="form-label">المنطقة</label><input type="text" id="add-area" class="form-input"></div>
+            <div class="form-group"><label class="form-label">المنطقة</label><input type="text" id="add-area" class="form-input" list="areas-list" placeholder="اختر أو اكتب..."></div>
             <div class="form-group"><label class="form-label">نوع البضاعة</label><input type="text" id="add-product" class="form-input"></div>
         </div>
         <div class="grid-2">
@@ -406,7 +411,7 @@
         <input type="hidden" id="edit-uuid">
         <div class="form-group"><label class="form-label">الاسم مثال ف1ص1</label><input type="text" id="edit-name" class="form-input"></div>
         <div class="grid-2">
-            <div class="form-group"><label class="form-label">المنطقة</label><input type="text" id="edit-area" class="form-input"></div>
+            <div class="form-group"><label class="form-label">المنطقة</label><input type="text" id="edit-area" class="form-input" list="areas-list" placeholder="اختر أو اكتب..."></div>
             <div class="form-group"><label class="form-label">نوع البضاعة</label><input type="text" id="edit-product" class="form-input"></div>
         </div>
         <div class="grid-2">
@@ -538,7 +543,56 @@
     }
 
     function initDatabase() { var req = indexedDB.open("AmerEnterpriseDB_V17", 1); req.onupgradeneeded = function(e) { AppDB = e.target.result; if(!AppDB.objectStoreNames.contains("clients_store")) AppDB.createObjectStore("clients_store", {keyPath:"uuid"}); }; req.onsuccess = function(e) { AppDB = e.target.result; fetchClients(); }; }
-    function fetchClients() { var req = AppDB.transaction("clients_store", "readonly").objectStore("clients_store").getAll(); req.onsuccess = function() { ClientsData = req.result; populateInitialFilters(); processFilters(); }; }
+    
+    function fetchClients() { 
+        var req = AppDB.transaction("clients_store", "readonly").objectStore("clients_store").getAll(); 
+        req.onsuccess = function() { 
+            ClientsData = req.result; 
+            updateAreasData(); // تحديث قائمة المناطق الذكية
+            populateInitialFilters(); 
+            processFilters(); 
+        }; 
+    }
+
+    // --- دالة جديدة لتحديث مناطق الإضافة والفلترة لتجنب التكرار ---
+    function updateAreasData() {
+        var uArea = new Set();
+        ClientsData.forEach(function(c) {
+            if(c.area && c.area !== "غير محدد") {
+                // استخدام trim لإزالة أي مسافات خاطئة تسبب تكرار المنطقة
+                uArea.add(c.area.trim());
+            }
+        });
+
+        var sortedAreas = Array.from(uArea).sort();
+        
+        // 1. تحديث قائمة الاقتراحات (Datalist)
+        var dataList = document.getElementById('areas-list');
+        if(dataList) {
+            dataList.innerHTML = '';
+            sortedAreas.forEach(function(a) {
+                dataList.innerHTML += '<option value="' + a + '">';
+            });
+        }
+
+        // 2. تحديث فلاتر البحث في الشاشتين (حتى لا تتكرر)
+        var allFilter = document.getElementById('all-flt-area');
+        var lateFilter = document.getElementById('late-flt-area');
+        
+        if(allFilter) {
+            var currVal = allFilter.value;
+            allFilter.innerHTML = '<option value="ALL">📍 كل المناطق</option>';
+            sortedAreas.forEach(function(a){ allFilter.add(new Option(a, a)); });
+            allFilter.value = currVal || "ALL"; // الحفاظ على اختيار المستخدم
+        }
+        
+        if(lateFilter) {
+            var currLateVal = lateFilter.value;
+            lateFilter.innerHTML = '<option value="ALL">📍 كل المناطق</option>';
+            sortedAreas.forEach(function(a){ lateFilter.add(new Option(a, a)); });
+            lateFilter.value = currLateVal || "ALL";
+        }
+    }
 
     function populateInitialFilters() {
         if(document.getElementById('all-flt-month').options.length <= 1) {
@@ -565,11 +619,10 @@
         var fMonth=document.getElementById('all-flt-month').value;
         var cont = document.getElementById('all-clients-container'); cont.innerHTML="";
 
-        var uArea=new Set(), uDay=new Set();
+        var uDay=new Set();
 
         ClientsData.forEach(function(c) {
             var rem = c.totalAmount - c.paidAmount;
-            if(c.area !== "غير محدد") uArea.add(c.area);
             uDay.add(c.collectionDay);
 
             var pMonths = Array.isArray(c.planMonths) ? c.planMonths : [];
@@ -577,7 +630,7 @@
 
             var match = true;
             if(sTxt && c.name.toLowerCase().indexOf(sTxt) === -1) match=false;
-            if(fArea !== "ALL" && c.area !== fArea) match=false;
+            if(fArea !== "ALL" && c.area.trim() !== fArea) match=false;
             if(fDay !== "ALL" && c.collectionDay.toString() !== fDay) match=false;
             
             if(fMonth !== "ALL") {
@@ -596,8 +649,7 @@
             }
         });
 
-        if(document.getElementById('all-flt-area').options.length<=1) {
-            Array.from(uArea).sort().forEach(function(a){ document.getElementById('all-flt-area').add(new Option(a,a)); });
+        if(document.getElementById('all-flt-day').options.length<=1) {
             Array.from(uDay).sort(function(a,b){return a-b;}).forEach(function(d){ document.getElementById('all-flt-day').add(new Option("يوم " + d, d)); });
         }
     }
@@ -649,7 +701,7 @@
         var curM = new Date().getMonth() + 1;
         var curD = new Date().getDate();
         var count = 0;
-        var uArea=new Set(), uDay=new Set();
+        var uDay=new Set();
 
         ClientsData.forEach(function(c) {
             var rem = c.totalAmount - c.paidAmount;
@@ -660,12 +712,11 @@
             var hasCarry = c.statusMsg && (c.statusMsg.indexOf('مرحل') !== -1 || c.statusMsg.indexOf('متبقي') !== -1 || c.statusMsg.indexOf('مؤجل') !== -1);
 
             if (lateMonths.length > 0 || hasCarry) {
-                if(c.area !== "غير محدد") uArea.add(c.area);
                 uDay.add(c.collectionDay);
 
                 var match = true;
                 if(sTxt && c.name.toLowerCase().indexOf(sTxt) === -1) match=false;
-                if(fArea !== "ALL" && c.area !== fArea) match=false;
+                if(fArea !== "ALL" && c.area.trim() !== fArea) match=false;
                 if(fDay !== "ALL" && c.collectionDay.toString() !== fDay) match=false;
                 
                 if(fMonth !== "ALL") {
@@ -683,8 +734,7 @@
 
         if (count === 0) list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--success); font-weight:bold;">جميع الأقساط مسددة في هذا النطاق.</div>';
 
-        if(document.getElementById('late-flt-area').options.length<=1) {
-            Array.from(uArea).sort().forEach(function(a){ document.getElementById('late-flt-area').add(new Option(a,a)); });
+        if(document.getElementById('late-flt-day').options.length<=1) {
             Array.from(uDay).sort(function(a,b){return a-b;}).forEach(function(d){ document.getElementById('late-flt-day').add(new Option("يوم " + d, d)); });
         }
     }
@@ -801,7 +851,7 @@
         var client = { 
             uuid: "AMER-" + Date.now(), 
             name: name, 
-            area: document.getElementById('add-area').value||"غير محدد", 
+            area: document.getElementById('add-area').value.trim()||"غير محدد", 
             product: document.getElementById('add-product').value||"بضاعة", 
             totalAmount: tot, 
             paidAmount: 0, 
@@ -817,6 +867,7 @@
         };
         
         ClientsData.push(client);
+        updateAreasData(); // تحديث قائمة المناطق بعد الإضافة
         processFilters();
         if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters();
         if(document.getElementById('lateClientsModal').style.display === 'flex') processLateFilters();
@@ -929,6 +980,7 @@
     function execDelete(uuid) { 
         if(confirm("مسح الزبون نهائياً؟")) { 
             ClientsData = ClientsData.filter(function(x){ return x.uuid !== uuid; });
+            updateAreasData(); // تحديث القائمة بعد الحذف
             processFilters(); 
             if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters();
             closeModal('viewClientModal');
@@ -1081,7 +1133,7 @@
         editClientMedia.loc = finalEditLoc ? finalEditLoc : null;
 
         currentEditClient.name = name;
-        currentEditClient.area = document.getElementById('edit-area').value || "غير محدد";
+        currentEditClient.area = document.getElementById('edit-area').value.trim() || "غير محدد";
         currentEditClient.product = document.getElementById('edit-product').value || "بضاعة";
         currentEditClient.totalAmount = tot;
         currentEditClient.collectionDay = parseInt(document.getElementById('edit-day').value) || 1;
@@ -1104,6 +1156,7 @@
         var req = store.put(currentEditClient);
 
         req.onsuccess = function() {
+            updateAreasData(); // تحديث قائمة المناطق
             processFilters(); 
             if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters();
             closeModal('editClientModal'); 
@@ -1251,7 +1304,6 @@
                     let cloudData = docSnap.data();
                     let finalData = cloudData.appData;
 
-                    // فحص فك الضغط
                     if (cloudData.isCompressed) {
                         finalData = LZString.decompressFromUTF16(cloudData.appData);
                     }
@@ -1265,6 +1317,7 @@
                         parsedData.forEach(client => store.add(client));
                         tx.oncomplete = function() { 
                             window.ClientsData = parsedData; 
+                            window.updateAreasData();
                             if(typeof window.processFilters === 'function') window.processFilters(); 
                             
                             setTimeout(() => t.classList.remove('show'), 1000);
