@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>أقساطك المتكامل | نظام عامر V20.0</title>
     
+    <link rel="icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -112,9 +115,10 @@
         .dash-card b { font-size: 15px; display: block; margin-top: 2px; font-weight: 900; }
         
         .controls-section { padding: 8px 15px; background: var(--bg); position: sticky; top: 0; z-index: 90; }
+        /* --- تكبير حجم خانة البحث هنا بناءً على طلبك --- */
         .search-wrapper { position: relative; margin-bottom: 8px; }
-        .search-wrapper i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px;}
-        .main-search { width: 100%; background: var(--surface); border: 1px solid var(--border); padding: 10px 15px 10px 35px; border-radius: 12px; color: var(--text-main); font-size: 12px; }
+        .search-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px;}
+        .main-search { width: 100%; background: var(--surface); border: 1px solid var(--border); padding: 18px 22px 18px 40px !important; border-radius: 15px !important; color: var(--text-main); font-size: 16px !important; height: 55px !important; }
         .filters-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; align-items: center; }
         .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); padding: 6px 10px; border-radius: 8px; font-size: 10px; font-weight: 600; flex-shrink: 0; }
         
@@ -269,6 +273,7 @@
         <div class="top-bar">
             <div class="title-area"><h2>نظام الإدارة</h2><span>تم التطوير بواسطة عامر</span></div>
             <div class="header-actions">
+                <button class="icon-btn" onclick="logoutGoogle()" style="color: var(--danger); border-color: var(--danger); background: rgba(255, 59, 48, 0.1);" title="تسجيل الخروج من جوجل"><i class="fas fa-sign-out-alt"></i></button>
                 <button class="icon-btn" onclick="importDatabase()" style="color: var(--success); border-color: var(--success); background: rgba(50, 215, 75, 0.1);" title="استرجاع نسخة جوجل درايف"><i class="fas fa-cloud-upload-alt"></i></button>
                 <button class="icon-btn" onclick="exportDatabase()" style="color: var(--info); border-color: var(--info); background: rgba(10, 132, 255, 0.1);" title="تحميل لـ جوجل درايف"><i class="fas fa-cloud-download-alt"></i></button>
             </div>
@@ -1183,7 +1188,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, setPersistence, browserLocalPersistence, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -1257,6 +1262,23 @@
             alert("حدث خطأ أثناء الدخول: " + error.message + "\nتأكد من إضافة رابط التطبيق في Netlify أو Vercel إلى Domains في إعدادات Firebase.");
             console.error(error);
         });
+    };
+
+    window.logoutGoogle = function() {
+        if(confirm("هل أنت متأكد أنك تريد تسجيل الخروج من حساب جوجل؟")) {
+            var btn = document.querySelector('.fa-sign-out-alt').parentElement;
+            var originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            signOut(auth).then(() => {
+                localStorage.removeItem("amer_cloud_email");
+                window.location.reload();
+            }).catch((error) => {
+                btn.innerHTML = originalText;
+                alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+                console.error(error);
+            });
+        }
     };
 
     window.saveMyDataToCloud = async function() {
