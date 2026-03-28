@@ -26,18 +26,17 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        /* --- مستويات الظهور (Z-index) المقسمة بدقة --- */
         #splash-screen { z-index: 100000; }
         #toast-container { z-index: 99999; }
         #lock-screen { z-index: 99998; }
         #cloud-login-screen { z-index: 99997; }
+        #adminModal { z-index: 100001; }
         .floating-back-btn { z-index: 10000; } 
         .modal-overlay { z-index: 5000; } 
         #advanced-month-actions { z-index: 6000; } 
         #imageViewerModal { z-index: 7000; } 
         header { z-index: 100; } 
 
-        /* --- شاشة الفتح --- */
         #splash-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #111 0%, #000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease, transform 0.8s ease; overflow: hidden;}
         
         .splash-visual { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; margin-bottom: 40px; }
@@ -70,13 +69,12 @@
         @keyframes shine { to { background-position: 200% center; } }
 
         .splash-credits-new { position: absolute; bottom: 30px; text-align: center; width: 100%; padding: 0 20px; opacity: 0; animation: fadeIn 1s ease 1s forwards; }
-        .credits-title { font-size: 12px; color: var(--gold); font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .credits-title { font-size: 14px; color: var(--gold); font-weight: 900; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .credits-title::before, .credits-title::after { content: ''; width: 30px; height: 1px; background: rgba(212, 175, 55, 0.3); }
         
-        .credits-grid { display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 11px; color: #999; font-weight: 600; line-height: 1.6; }
-        .credits-item span { color: #fff; font-weight: 700; margin-right: 4px; }
-        .credits-item.support { color: #888; margin-top: 4px; font-size: 10.5px;}
-        .credits-enjoy { font-size: 12px; color: var(--gold); font-weight: 700; margin-top: 15px; font-style: italic; letter-spacing: 1px;}
+        .credits-grid { display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 12px; color: #999; font-weight: 600; line-height: 1.6; }
+        .credits-item span { color: #fff; font-weight: 900; margin-right: 4px; font-size: 14px; }
+        .credits-enjoy { font-size: 14px; color: var(--gold); font-weight: 900; margin-top: 15px; letter-spacing: 2px;}
         
         #lock-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #111 0%, #000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.6s ease; }
         .lock-brand { text-align: center; margin-bottom: 50px; }
@@ -105,7 +103,7 @@
         .title-area h2 { font-size: 18px; font-weight: 900; color: var(--gold); line-height: 1.2; }
         .title-area span { font-size: 9px; background: var(--surface-hover); padding: 2px 6px; border-radius: 8px; color: var(--text-muted); }
         .header-actions { display: flex; gap: 10px; }
-        .icon-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; color: var(--text-main); font-size: 12px; border: 1px solid var(--border); cursor: pointer; }
+        .icon-btn { width: 35px; height: 35px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; color: var(--text-main); font-size: 14px; border: 1px solid var(--border); cursor: pointer; }
         
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
         .dash-card { background: linear-gradient(145deg, var(--surface), #050505); padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); position: relative; overflow: hidden; cursor: pointer; }
@@ -113,14 +111,16 @@
         .dash-card.danger::before { background: var(--danger); }
         .dash-card span { font-size: 10px; color: var(--text-muted); font-weight: 700; }
         .dash-card b { font-size: 15px; display: block; margin-top: 2px; font-weight: 900; }
+
+        .spiritual-phrase { text-align: center; margin: 15px 0; font-size: 18px; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px var(--gold-glow), 0 0 10px var(--gold); animation: pulseGlow 2.5s infinite alternate; letter-spacing: 0.5px;}
+        @keyframes pulseGlow { from { opacity: 0.7; transform: scale(0.98); text-shadow: 0 0 10px var(--gold-glow); } to { opacity: 1; transform: scale(1.02); text-shadow: 0 0 25px var(--gold), 0 0 15px #fff; } }
         
         .controls-section { padding: 8px 15px; background: var(--bg); position: sticky; top: 0; z-index: 90; }
-        /* --- تكبير حجم خانة البحث هنا بناءً على طلبك --- */
-        .search-wrapper { position: relative; margin-bottom: 8px; }
-        .search-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px;}
-        .main-search { width: 100%; background: var(--surface); border: 1px solid var(--border); padding: 18px 22px 18px 40px !important; border-radius: 15px !important; color: var(--text-main); font-size: 16px !important; height: 55px !important; }
-        .filters-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; align-items: center; }
-        .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); padding: 6px 10px; border-radius: 8px; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+        .search-wrapper { position: relative; margin-bottom: 12px; }
+        .search-wrapper i { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 20px;}
+        .main-search { width: 100%; background: var(--surface); border: 1px solid var(--border); padding: 15px 22px 15px 50px !important; border-radius: 20px !important; color: var(--text-main); font-size: 18px !important; height: 70px !important; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);}
+        .filters-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; align-items: center; }
+        .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); padding: 0 15px; border-radius: 15px; font-size: 14px; font-weight: 700; height: 60px; flex-shrink: 0; appearance: none; -webkit-appearance: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
         
         #all-clients-container, #late-clients-list { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
         
@@ -160,7 +160,6 @@
         .media-box span { font-size: 10px; color: var(--text-muted); }
         .media-box.has-img { border-style: solid; border-color: var(--gold); }
         
-        /* --- تعديل الأزرار ليكون حجمها أكبر --- */
         .btn { width: 100%; padding: 22px; border-radius: 20px; font-size: 18px; font-weight: 900; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-primary { background: var(--gold); color: #000; }
         .btn-secondary { background: var(--surface); color: #fff; border: 1px solid var(--border); }
@@ -180,27 +179,15 @@
         .toast.show { transform: translateY(0); opacity: 1; }
 
         .floating-back-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            background: var(--surface);
-            border: 1px solid var(--gold);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: var(--gold);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
-            cursor: pointer;
+            position: fixed; bottom: 25px; right: 25px; width: 50px; height: 50px; background: var(--surface);
+            border: 1px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: var(--gold); box-shadow: 0 5px 15px rgba(0,0,0,0.8); cursor: pointer;
         }
-        .floating-back-btn:active {
-            transform: scale(0.9);
-            background: var(--gold);
-            color: #000;
-        }
+        .floating-back-btn:active { transform: scale(0.9); background: var(--gold); color: #000; }
+
+        .admin-item { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 10px; }
+        .admin-item-info p { font-size: 14px; color: #fff; font-weight: bold; margin-bottom: 5px; }
+        .admin-item-info span { font-size: 11px; color: var(--text-muted); }
     </style>
 
     <link rel="manifest" href="manifest.json">
@@ -235,13 +222,12 @@
     </div>
     
     <div class="splash-credits-new">
-        <div class="credits-title">فريق العمل</div>
+        <div class="credits-title">النظام المتقدم</div>
         <div class="credits-grid">
-            <div class="credits-item">تطوير وبرمجة: <span>عامر وليد</span></div>
-            <div class="credits-item">تسويق: <span>أحمد خالد</span></div>
-            <div class="credits-item support">بدعم كلاً من: اسلام خالد و مجدي عطيفي</div>
+            <div class="credits-item">تطوير وبرمجة: <span>ابو ادم عامر</span></div>
+            <div class="credits-item">تأسيس وتصميم: <span>عامر وليد</span></div>
         </div>
-        <div class="credits-enjoy">تجربة ممتعة</div>
+        <div class="credits-enjoy">AMER SYSTEM V20.0</div>
     </div>
 </div>
 
@@ -263,7 +249,6 @@
         <i class="fas fa-cloud"></i>
         <h2>حساب النسخة الاحتياطية</h2>
         <p>للحفاظ على بياناتك، قم بربط حسابك السحابي لحفظ واسترجاع البيانات في حالة فقدان الهاتف</p>
-        
         <button class="cloud-btn" onclick="loginWithGoogle()"><i class="fab fa-google"></i> تسجيل الدخول بحساب جوجل</button>
     </div>
 </div>
@@ -271,8 +256,9 @@
 <div id="app-core">
     <header>
         <div class="top-bar">
-            <div class="title-area"><h2>نظام الإدارة</h2><span>تم التطوير بواسطة عامر</span></div>
+            <div class="title-area"><h2>نظام الإدارة</h2><span>AMER V20.0</span></div>
             <div class="header-actions">
+                <button class="icon-btn" onclick="openAdminPrompt()" style="color: #fff; border-color: var(--gold); background: rgba(212, 175, 55, 0.2);" title="لوحة الإدارة"><i class="fas fa-user-shield"></i></button>
                 <button class="icon-btn" onclick="logoutGoogle()" style="color: var(--danger); border-color: var(--danger); background: rgba(255, 59, 48, 0.1);" title="تسجيل الخروج من جوجل"><i class="fas fa-sign-out-alt"></i></button>
                 <button class="icon-btn" onclick="importDatabase()" style="color: var(--success); border-color: var(--success); background: rgba(50, 215, 75, 0.1);" title="استرجاع نسخة جوجل درايف"><i class="fas fa-cloud-upload-alt"></i></button>
                 <button class="icon-btn" onclick="exportDatabase()" style="color: var(--info); border-color: var(--info); background: rgba(10, 132, 255, 0.1);" title="تحميل لـ جوجل درايف"><i class="fas fa-cloud-download-alt"></i></button>
@@ -296,14 +282,16 @@
         </div>
 
         <div style="display: flex; gap: 10px;">
-            <button onclick="openAllClients()" style="flex:1; padding:12px; border-radius:12px; background:rgba(212,175,55,0.15); border:1px solid var(--gold); color:var(--gold); font-weight:bold; font-size:13px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px; box-shadow: 0 4px 15px rgba(212,175,55,0.1);">
+            <button onclick="openAllClients()" style="flex:1; padding:15px; border-radius:15px; background:rgba(212,175,55,0.15); border:1px solid var(--gold); color:var(--gold); font-weight:900; font-size:15px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px; box-shadow: 0 4px 15px rgba(212,175,55,0.1);">
                 <i class="fas fa-users"></i> كل الزبائن
             </button>
-            <button onclick="openLateClientsModal()" style="flex:1; padding:12px; border-radius:12px; background:rgba(255,59,48,0.15); border:1px solid var(--danger); color:var(--danger); font-weight:bold; font-size:13px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px; box-shadow: 0 4px 15px rgba(255,59,48,0.1);">
+            <button onclick="openLateClientsModal()" style="flex:1; padding:15px; border-radius:15px; background:rgba(255,59,48,0.15); border:1px solid var(--danger); color:var(--danger); font-weight:900; font-size:15px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px; box-shadow: 0 4px 15px rgba(255,59,48,0.1);">
                 <i class="fas fa-exclamation-triangle"></i> المتأخرات
             </button>
         </div>
     </header>
+
+    <div class="spiritual-phrase fade-in">صل علي النبي المبعوث رحمة للعالمين</div>
 
     <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.15;">
         <i class="fas fa-shield-alt" style="font-size: 80px; color: var(--gold); margin-bottom: 15px;"></i>
@@ -315,6 +303,16 @@
         <div class="fab-add" onclick="openModal('addClientModal')"><i class="fas fa-plus"></i></div>
         <div class="nav-item" onclick="triggerToast('النظام جاهز')"><i class="fas fa-shield-alt"></i></div>
     </nav>
+</div>
+
+<div id="adminModal" class="modal-overlay" style="background: var(--bg); flex-direction: column; justify-content: flex-start;">
+    <header style="padding: 15px; background: var(--surface); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border);">
+        <h2 style="font-size: 18px; color: var(--gold); margin: 0;"><i class="fas fa-user-shield"></i> لوحة تحكم المدير</h2>
+        <div class="close-btn" onclick="closeModal('adminModal')"><i class="fas fa-times"></i></div>
+    </header>
+    <div id="admin-backups-list" style="flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 30px;">
+        <div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="color:var(--gold); font-size:24px;"></i></div>
+    </div>
 </div>
 
 <div id="monthStatsModal" class="modal-overlay" style="background: var(--bg); flex-direction: column; justify-content: flex-start;">
@@ -561,25 +559,22 @@
         var req = AppDB.transaction("clients_store", "readonly").objectStore("clients_store").getAll(); 
         req.onsuccess = function() { 
             ClientsData = req.result; 
-            updateAreasData(); // تحديث قائمة المناطق الذكية
+            updateAreasData(); 
             populateInitialFilters(); 
             processFilters(); 
         }; 
     }
 
-    // --- دالة جديدة لتحديث مناطق الإضافة والفلترة لتجنب التكرار ---
     function updateAreasData() {
         var uArea = new Set();
         ClientsData.forEach(function(c) {
             if(c.area && c.area !== "غير محدد") {
-                // استخدام trim لإزالة أي مسافات خاطئة تسبب تكرار المنطقة
                 uArea.add(c.area.trim());
             }
         });
 
         var sortedAreas = Array.from(uArea).sort();
         
-        // 1. تحديث قائمة الاقتراحات (Datalist)
         var dataList = document.getElementById('areas-list');
         if(dataList) {
             dataList.innerHTML = '';
@@ -588,7 +583,6 @@
             });
         }
 
-        // 2. تحديث فلاتر البحث في الشاشتين (حتى لا تتكرر)
         var allFilter = document.getElementById('all-flt-area');
         var lateFilter = document.getElementById('late-flt-area');
         
@@ -596,7 +590,7 @@
             var currVal = allFilter.value;
             allFilter.innerHTML = '<option value="ALL">📍 كل المناطق</option>';
             sortedAreas.forEach(function(a){ allFilter.add(new Option(a, a)); });
-            allFilter.value = currVal || "ALL"; // الحفاظ على اختيار المستخدم
+            allFilter.value = currVal || "ALL"; 
         }
         
         if(lateFilter) {
@@ -850,8 +844,8 @@
         }, function(err) {
             btn.innerHTML = originalText;
             btn.disabled = false;
-            triggerToast("فشل التحديد، تأكد من الـ GPS", "error");
-        }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
+            triggerToast("فشل التحديد، تأكد من الـ GPS ومن إعدادات Median", "error");
+        }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
     }
 
     function processSaveClient() {
@@ -880,7 +874,7 @@
         };
         
         ClientsData.push(client);
-        updateAreasData(); // تحديث قائمة المناطق بعد الإضافة
+        updateAreasData(); 
         processFilters();
         if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters();
         if(document.getElementById('lateClientsModal').style.display === 'flex') processLateFilters();
@@ -993,7 +987,7 @@
     function execDelete(uuid) { 
         if(confirm("مسح الزبون نهائياً؟")) { 
             ClientsData = ClientsData.filter(function(x){ return x.uuid !== uuid; });
-            updateAreasData(); // تحديث القائمة بعد الحذف
+            updateAreasData(); 
             processFilters(); 
             if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters();
             closeModal('viewClientModal');
@@ -1129,8 +1123,8 @@
             triggerToast('تم تحديث الموقع بنجاح');
         }, function(err) {
             btn.innerHTML = originalText; btn.disabled = false;
-            triggerToast("فشل التحديث، تأكد من الـ GPS", "error");
-        }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
+            triggerToast("فشل التحديث، تأكد من الـ GPS ومن إعدادات Median", "error");
+        }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
     }
 
     function processSaveEditClient() {
@@ -1169,7 +1163,7 @@
         var req = store.put(currentEditClient);
 
         req.onsuccess = function() {
-            updateAreasData(); // تحديث قائمة المناطق
+            updateAreasData(); 
             processFilters(); 
             if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters();
             closeModal('editClientModal'); 
@@ -1184,12 +1178,23 @@
             triggerToast("حدث خطأ أثناء الحفظ", "error");
         };
     }
+
+    // فتح لوحة التحكم المخصصة للإدارة
+    window.openAdminPrompt = function() {
+        var pin = prompt("أدخل رمز لوحة الإدارة:");
+        if(pin === "1120") {
+            openModal('adminModal');
+            if(window.loadAdminData) window.loadAdminData();
+        } else if(pin !== null && pin !== "") {
+            triggerToast("الرمز خاطئ، غير مصرح لك", "error");
+        }
+    };
 </script>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, setPersistence, browserLocalPersistence, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBEUxhZcy_4voJGwS_x_GKmy6axlR4z5LQ",
@@ -1259,7 +1264,7 @@
             }
         }).catch((error) => {
             if(btn) btn.innerHTML = originalText || '<i class="fab fa-google"></i> تسجيل الدخول بحساب جوجل';
-            alert("حدث خطأ أثناء الدخول: " + error.message + "\nتأكد من إضافة رابط التطبيق في Netlify أو Vercel إلى Domains في إعدادات Firebase.");
+            alert("حدث خطأ أثناء الدخول: " + error.message + "\nتأكد من إضافة رابط التطبيق في Netlify إلى Domains في إعدادات Firebase.");
             console.error(error);
         });
     };
@@ -1293,7 +1298,9 @@
                 const dataStr = JSON.stringify(window.ClientsData);
                 const compressedData = LZString.compressToUTF16(dataStr);
 
+                // تم إضافة الإيميل هنا ليتسنى عرضه في لوحة التحكم
                 await setDoc(doc(db, "users_data", user.uid), {
+                    email: user.email,
                     appData: compressedData,
                     isCompressed: true,
                     lastSaved: new Date().toISOString()
@@ -1377,6 +1384,67 @@
             if(c) {
                 c.style.display = 'flex';
                 setTimeout(() => c.style.opacity = '1', 50);
+            }
+        }
+    };
+
+    // دالة لوحة تحكم الإدارة (تعتمد على إعدادات الحماية Rules في الفايربيس)
+    window.loadAdminData = async function() {
+        var list = document.getElementById('admin-backups-list');
+        list.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="color:var(--gold); font-size:24px;"></i></div>';
+        
+        try {
+            const querySnapshot = await getDocs(collection(db, "users_data"));
+            list.innerHTML = '';
+            
+            if (querySnapshot.empty) {
+                list.innerHTML = '<div style="text-align:center; color:var(--text-muted);">لا توجد نسخ احتياطية مسجلة بعد.</div>';
+                return;
+            }
+
+            querySnapshot.forEach((docSnap) => {
+                var data = docSnap.data();
+                var email = data.email || "غير معروف (نسخة قديمة)";
+                var date = data.lastSaved ? new Date(data.lastSaved).toLocaleString('ar-EG') : "تاريخ غير متوفر";
+                var docId = docSnap.id;
+                
+                list.innerHTML += `
+                    <div class="admin-item" id="admin-doc-${docId}">
+                        <div class="admin-item-info">
+                            <p><i class="fas fa-envelope" style="color:var(--gold);"></i> ${email}</p>
+                            <span><i class="fas fa-clock"></i> ${date}</span>
+                        </div>
+                        <button class="btn" style="width: auto; padding: 10px 15px; background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger); font-size: 14px; border-radius: 10px;" onclick="window.deleteUserBackup('${docId}', '${email}')">
+                            <i class="fas fa-trash-alt"></i> مسح
+                        </button>
+                    </div>
+                `;
+            });
+        } catch (e) {
+            list.innerHTML = `<div style="text-align:center; color:var(--danger); padding:20px;">حدث خطأ أثناء الجلب. تأكد من إعدادات (Firestore Rules) لتسمح بالقراءة للمدير.<br><br><span style="font-size:11px;">${e.message}</span></div>`;
+        }
+    };
+
+    window.deleteUserBackup = async function(docId, email) {
+        if(confirm(`هل أنت متأكد من مسح النسخة الاحتياطية الخاصة بـ:\n${email}\nهذا الإجراء لا يمكن التراجع عنه!`)) {
+            try {
+                var btn = document.querySelector(`#admin-doc-${docId} button`);
+                var originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                await deleteDoc(doc(db, "users_data", docId));
+                document.getElementById(`admin-doc-${docId}`).remove();
+                
+                var t = document.getElementById('toast');
+                t.style.background = "var(--success)";
+                document.getElementById('toast-msg').innerText = "تم مسح النسخة بنجاح!";
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 3000);
+            } catch (e) {
+                alert("خطأ أثناء المسح: " + e.message);
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
             }
         }
     };
