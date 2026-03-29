@@ -69,8 +69,6 @@
 
         .amer-brand { font-family: sans-serif; font-size: 65px; font-weight: 900; color: var(--gold); letter-spacing: 8px; position: relative; text-transform: uppercase; margin-right: -8px; background: linear-gradient(to right, var(--gold) 20%, #fff 40%, #fff 60%, var(--gold) 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; filter: drop-shadow(0 0 15px var(--gold-glow)); }
 
-        @keyframes shine { to { background-position: 200% center; } }
-
         .splash-credits-new { position: absolute; bottom: 30px; text-align: center; width: 100%; padding: 0 20px; opacity: 0; animation: fadeIn 1s ease 1s forwards; }
         .credits-title { font-size: 14px; color: var(--gold); font-weight: 900; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .credits-title::before, .credits-title::after { content: ''; width: 30px; height: 1px; background: rgba(212, 175, 55, 0.3); }
@@ -82,7 +80,7 @@
         
         #lock-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #111 0%, #000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.6s ease; }
         .lock-brand { text-align: center; margin-bottom: 50px; }
-        .lock-brand h1 { font-size: 55px; font-weight: 900; color: var(--gold); text-shadow: 0 0 25px var(--gold-glow); letter-spacing: 2px; }
+        .lock-brand h1 { font-size: 55px; font-weight: 900; color: var(--gold); text-shadow: 0 0 25px var(--gold-glow); letter-spacing: 2px; margin-bottom: 0;}
         .lock-brand p { font-size: 13px; color: var(--text-muted); font-weight: 700; letter-spacing: 4px; margin-top: 5px; }
         .pin-dots { display: flex; gap: 20px; margin-bottom: 40px; height: 20px; }
         .dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--gold); transition: all 0.3s ease; }
@@ -106,8 +104,8 @@
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .title-area h2 { font-size: 18px; font-weight: 900; color: var(--gold); line-height: 1.2; }
         .title-area span { font-size: 9px; background: var(--surface-hover); padding: 2px 6px; border-radius: 8px; color: var(--text-muted); }
-        .header-actions { display: flex; gap: 10px; }
-        .icon-btn { width: 35px; height: 35px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; color: var(--text-main); font-size: 12px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.1s; }
+        .header-actions { display: flex; gap: 12px; }
+        .icon-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; color: var(--text-main); font-size: 18px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.1s; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .icon-btn:active { transform: scale(0.9); }
         
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
@@ -121,14 +119,26 @@
         .spiritual-phrase { 
             font-family: 'Amiri', serif; 
             text-align: center; 
-            margin: 40px 0 20px; 
-            font-size: 26px; 
+            margin: 30px auto 20px; 
+            font-size: 24px; 
             font-weight: 700; 
             color: var(--gold); 
             text-shadow: 0 0 15px var(--gold-glow), 0 0 5px var(--gold); 
             animation: pulseGlow 3s infinite alternate; 
-            padding: 0 10px;
+            padding: 15px 10px;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(0, 0, 0, 0.8));
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8), inset 0 0 15px rgba(212, 175, 55, 0.15);
+            width: 92%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
+        .spiritual-phrase i { font-size: 18px; color: var(--gold); opacity: 0.9; }
+        
         @keyframes pulseGlow { from { opacity: 0.8; transform: scale(0.98); text-shadow: 0 0 10px var(--gold-glow); } to { opacity: 1; transform: scale(1.03); text-shadow: 0 0 25px var(--gold), 0 0 10px #fff; } }
         
         .controls-section { padding: 8px 15px; background: var(--bg); position: sticky; top: 0; z-index: 90; }
@@ -242,7 +252,8 @@
             <span class="bag-text">أقساطك</span>
         </div>
         
-        <h1 class="amer-brand slide-up">AMER</h1>
+        <h1 class="amer-brand slide-up" style="margin-bottom: 0;">AMER</h1>
+        <div class="slide-up" style="color: #fff; font-size: 24px; font-weight: 900; letter-spacing: 15px; margin-top: 5px; margin-right: -15px; text-shadow: 0 0 15px rgba(255,255,255,0.3);">ABDO</div>
     </div>
     
     <div class="splash-credits-new">
@@ -259,7 +270,11 @@
 <div id="toast-container"><div id="toast" class="toast"><i class="fas fa-check-circle"></i><span id="toast-msg">رسالة</span></div></div>
 
 <div id="lock-screen">
-    <div class="lock-brand"><h1>أقساطك</h1><p>AMER SYSTEM V20.0</p></div>
+    <div class="lock-brand">
+        <h1 style="margin-bottom: 0;">أقساطك</h1>
+        <div style="color: var(--gold); font-size: 20px; font-weight: 900; letter-spacing: 12px; margin-top: 5px; margin-right: -12px; text-shadow: 0 0 15px var(--gold-glow);">ABDO</div>
+        <p>AMER SYSTEM V20.0</p>
+    </div>
     <div class="pin-dots" id="pin-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
     <div class="keypad">
         <script>for(let i=1; i<=9; i++) document.write('<div class="key" onclick="enterPin(\'' + i + '\')">' + i + '</div>');</script>
@@ -293,12 +308,10 @@
 <div id="app-core">
     <header>
         <div class="top-bar">
-            <div class="title-area"><h2>الرئيسية</h2><span>نظام عامر </span></div>
+            <div class="title-area"><h2>نظام الإدارة</h2><span>AMER V20.0</span></div>
             <div class="header-actions">
                 <button class="icon-btn" onclick="openAdminPrompt()" style="color: #fff; border-color: var(--gold); background: rgba(212, 175, 55, 0.2);" title="لوحة الإدارة"><i class="fas fa-user-shield"></i></button>
                 <button class="icon-btn" onclick="logoutGoogle()" style="color: var(--danger); border-color: var(--danger); background: rgba(255, 59, 48, 0.1);" title="تسجيل الخروج من جوجل"><i class="fas fa-sign-out-alt"></i></button>
-                <button class="icon-btn" onclick="importDatabase()" style="color: var(--success); border-color: var(--success); background: rgba(50, 215, 75, 0.1);" title="استرجاع نسخة جوجل درايف"><i class="fas fa-cloud-upload-alt"></i></button>
-                <button class="icon-btn" onclick="exportDatabase()" style="color: var(--info); border-color: var(--info); background: rgba(10, 132, 255, 0.1);" title="تحميل لـ جوجل درايف"><i class="fas fa-cloud-download-alt"></i></button>
             </div>
         </div>
 
@@ -328,7 +341,7 @@
         </div>
     </header>
 
-    <div class="spiritual-phrase fade-in" id="dynamic-dhikr">هل صليت علي النبي اليوم؟</div>
+    <div class="spiritual-phrase fade-in"><i class="fas fa-star-and-crescent"></i> <span id="dynamic-dhikr">هل صليت علي النبي اليوم؟</span> <i class="fas fa-star-and-crescent"></i></div>
 
     <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.15;">
         <i class="fas fa-shield-alt" style="font-size: 80px; color: var(--gold); margin-bottom: 15px;"></i>
@@ -545,7 +558,6 @@
 
     function setRandomDhikr() {
         const dhikrList = [
-            "هل صليت علي النبي اليوم؟",
             "ألا بذكر الله تطمئن القلوب",
             "سبحان الله وبحمده، سبحان الله العظيم",
             "استغفر الله العظيم وأتوب إليه",
@@ -570,6 +582,7 @@
                     document.getElementById('lock-screen').style.display = 'none';
                     document.getElementById('app-core').style.display = 'flex';
                     document.getElementById('app-core').style.opacity = '1';
+                    setTimeout(function(){ if(window.loadMyDataFromCloud) window.loadMyDataFromCloud(true); }, 500);
                 }
             }, 800); 
         }, 5200); 
@@ -600,7 +613,10 @@
             } else {
                 var a=document.getElementById('app-core'); 
                 a.style.display="flex";
-                setTimeout(function(){ a.style.opacity="1"; },50);
+                setTimeout(function(){ 
+                    a.style.opacity="1"; 
+                    if(window.loadMyDataFromCloud) window.loadMyDataFromCloud(true);
+                },50);
             }
         },500); 
     }
@@ -956,7 +972,10 @@
 
         var tx = AppDB.transaction("clients_store", "readwrite"); 
         tx.objectStore("clients_store").add(client);
-        tx.oncomplete = function() { triggerToast("تم الحفظ بنجاح"); };
+        tx.oncomplete = function() { 
+            triggerToast("تم الإضافة محلياً بنجاح"); 
+            if(window.saveMyDataToCloud) window.saveMyDataToCloud();
+        };
     }
 
     function openClientDetails(uuid) {
@@ -973,7 +992,7 @@
 
         document.getElementById('view-dynamic-content').innerHTML = '<div class="m-head"><h2 style="font-size:20px;">' + c.name + '</h2><div class="close-btn" onclick="closeModal(\'viewClientModal\')"><i class="fas fa-times"></i></div></div><div class="dash-card" style="margin-bottom:20px;"><div style="display:flex; justify-content:space-between;"><div><span>المتبقي</span><b style="color:var(--danger)">' + rem.toLocaleString() + ' ج</b></div><div style="text-align:left"><span>القسط</span><b style="color:var(--gold)">' + c.monthlyInstallment + ' ج</b></div></div></div>' + 
         '<div class="dash-card" style="margin-bottom:20px;"><span style="color:var(--text-muted); font-size:11px;">العنوان / ملاحظات:</span><p style="font-size:13px; color:#fff; margin-top:5px; line-height:1.5;">' + (c.addressNotes || 'لا يوجد ملاحظات مسجلة') + '</p></div>' + 
-        '<div><label class="form-label">خطة التقسيط (اضغط على الشهر للإجراء)</label><div class="months-grid">' + mHtml + '</div></div><div class="media-grid"><div class="media-box ' + (c.media.id?'has-img':'') + '" onclick="viewMedia(\'' + c.media.id + '\')">' + (c.media.id?'<img src="' + c.media.id + '" style="display:block">':'<i class="fas fa-id-card"></i>') + '</div><div class="media-box ' + (c.media.hm?'has-img':'') + '" onclick="viewMedia(\'' + c.media.hm + '\')">' + (c.media.hm?'<img src="' + c.media.hm + '" style="display:block">':'<i class="fas fa-home"></i>') + '</div><div class="media-box ' + (c.media.ct?'has-img':'') + '" onclick="viewMedia(\'' + c.media.ct + '\')">' + (c.media.ct?'<img src="' + c.media.ct + '" style="display:block">':'<i class="fas fa-file-signature"></i>') + '</div></div><div class="action-grid" style="margin-top:10px;"><div class="action-card" onclick="window.open(\'tel:' + c.phone + '\')"><i class="fas fa-phone-alt" style="color:var(--info);"></i></div><div class="action-card" onclick="window.open(\'https://wa.me/2' + c.phone + '\')"><i class="fab fa-whatsapp" style="color:#25D366;"></i></div><div class="action-card" onclick="openMapLink(\'' + c.media.loc + '\')"><i class="fas fa-map-marker-alt" style="color:var(--danger);"></i></div></div><div class="history-section"><div class="history-title">المال المحصل من هذ الزبون</div>' + hHtml + '</div><button class="btn btn-primary" style="margin-top:30px; background:var(--info); color:#fff; border-color:var(--info);" onclick="openEditModal(\'' + c.uuid + '\')"><i class="fas fa-edit"></i> تعديل بيانات الزبون</button><button class="btn" style="background:rgba(255,59,48,0.1); color:var(--danger); margin-top:10px;" onclick="execDelete(\'' + c.uuid + '\')"><i class="fas fa-trash-alt"></i> مسح الملف نهائياً</button>';
+        '<div><label class="form-label">خطة التقسيط (اضغط على الشهر للإجراء)</label><div class="months-grid">' + mHtml + '</div></div><div class="media-grid"><div class="media-box ' + (c.media.id?'has-img':'') + '" onclick="viewMedia(\'' + c.media.id + '\')">' + (c.media.id?'<img src="' + c.media.id + '" style="display:block">':'<i class="fas fa-id-card"></i>') + '</div><div class="media-box ' + (c.media.hm?'has-img':'') + '" onclick="viewMedia(\'' + c.media.hm + '\')">' + (c.media.hm?'<img src="' + c.media.hm + '" style="display:block">':'<i class="fas fa-home"></i>') + '</div><div class="media-box ' + (c.media.ct?'has-img':'') + '" onclick="viewMedia(\'' + c.media.ct + '\')">' + (c.media.ct?'<img src="' + c.media.ct + '" style="display:block">':'<i class="fas fa-file-signature"></i>') + '</div></div><div class="action-grid" style="margin-top:10px;"><div class="action-card" onclick="window.open(\'tel:' + c.phone + '\')"><i class="fas fa-phone-alt" style="color:var(--info);"></i></div><div class="action-card" onclick="window.open(\'https://wa.me/2' + c.phone + '\')"><i class="fab fa-whatsapp" style="color:#25D366;"></i></div><div class="action-card" onclick="openMapLink(\'' + c.media.loc + '\')"><i class="fas fa-map-marker-alt" style="color:var(--danger);"></i></div></div><div class="history-section"><div class="history-title">سجل العمليات لعامر</div>' + hHtml + '</div><button class="btn btn-primary" style="margin-top:30px; background:var(--info); color:#fff; border-color:var(--info);" onclick="openEditModal(\'' + c.uuid + '\')"><i class="fas fa-edit"></i> تعديل بيانات الزبون</button><button class="btn" style="background:rgba(255,59,48,0.1); color:var(--danger); margin-top:10px;" onclick="execDelete(\'' + c.uuid + '\')"><i class="fas fa-trash-alt"></i> مسح الملف نهائياً</button>';
         openModal('viewClientModal');
     }
 
@@ -1032,7 +1051,7 @@
         }
         
         closeAdvancedBox();
-        updateClientInDB(c, "تم التحديث بنجاح");
+        updateClientInDB(c, "تم التحديث محلياً بنجاح");
     }
 
     function updateClientInDB(c, msg) { 
@@ -1041,7 +1060,10 @@
         if(document.getElementById('viewClientModal').style.display === 'flex') openClientDetails(c.uuid);
         if(document.getElementById('lateClientsModal').style.display === 'flex') processLateFilters();
         if(document.getElementById('monthStatsModal').style.display === 'flex') showMonthStats(currentMonthStatsType);
-        AppDB.transaction("clients_store","readwrite").objectStore("clients_store").put(c).oncomplete=function(){ triggerToast(msg); }; 
+        AppDB.transaction("clients_store","readwrite").objectStore("clients_store").put(c).oncomplete=function(){ 
+            triggerToast(msg); 
+            if(window.saveMyDataToCloud) window.saveMyDataToCloud();
+        }; 
     }
 
     function execDelete(uuid) { 
@@ -1053,7 +1075,10 @@
             closeModal('viewClientModal');
             if(document.getElementById('lateClientsModal').style.display === 'flex') processLateFilters();
             if(document.getElementById('monthStatsModal').style.display === 'flex') showMonthStats(currentMonthStatsType);
-            AppDB.transaction("clients_store","readwrite").objectStore("clients_store").delete(uuid).oncomplete=function(){ triggerToast("تم الحذف بنجاح"); }; 
+            AppDB.transaction("clients_store","readwrite").objectStore("clients_store").delete(uuid).oncomplete=function(){ 
+                triggerToast("تم الحذف بنجاح"); 
+                if(window.saveMyDataToCloud) window.saveMyDataToCloud();
+            }; 
         } 
     }
 
@@ -1070,16 +1095,6 @@
     
     function openMapLink(l) { if(l && l !== 'null') window.open(l); }
     
-    function exportDatabase() { 
-        if(window.saveMyDataToCloud) window.saveMyDataToCloud(); 
-        else triggerToast("جاري تهيئة خدمات جوجل... حاول مجدداً", "error");
-    }
-    
-    function importDatabase() {
-        if(window.loadMyDataFromCloud) window.loadMyDataFromCloud();
-        else triggerToast("جاري تهيئة خدمات جوجل... حاول مجدداً", "error");
-    }
-
     function openEditModal(uuid) {
         currentEditClient = ClientsData.find(function(x) { return x.uuid === uuid; });
         if(!currentEditClient) return;
@@ -1229,7 +1244,8 @@
             processFilters(); 
             if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters();
             closeModal('editClientModal'); 
-            triggerToast("تم حفظ التعديلات بنجاح");
+            triggerToast("تم حفظ التعديلات محلياً");
+            if(window.saveMyDataToCloud) window.saveMyDataToCloud();
             
             setTimeout(function() { 
                 openClientDetails(currentEditClient.uuid); 
@@ -1263,7 +1279,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, setPersistence, browserLocalPersistence, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-    // إضافة مكتبة Storage (تركتها لعدم حذف أي كود قديم كما أشرت)
     import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
 
     const firebaseConfig = {
@@ -1279,7 +1294,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app); // تهيئة المخزن
+    const storage = getStorage(app); 
     const provider = new GoogleAuthProvider();
 
     setPersistence(auth, browserLocalPersistence);
@@ -1296,7 +1311,10 @@
                     c.style.display = "none"; 
                     if(a) {
                         a.style.display = "flex"; 
-                        setTimeout(function(){ a.style.opacity = "1"; }, 50); 
+                        setTimeout(function(){ 
+                            a.style.opacity = "1"; 
+                            if(window.loadMyDataFromCloud) window.loadMyDataFromCloud(true);
+                        }, 50); 
                     }
                 }, 500);
             }
@@ -1328,7 +1346,10 @@
                         c.style.display = "none"; 
                         if(a) {
                             a.style.display = "flex"; 
-                            setTimeout(function(){ a.style.opacity = "1"; }, 50); 
+                            setTimeout(function(){ 
+                                a.style.opacity = "1"; 
+                                if(window.loadMyDataFromCloud) window.loadMyDataFromCloud(true);
+                            }, 50); 
                         }
                     }, 500);
                 }
@@ -1356,65 +1377,49 @@
         }
     };
 
-    // نظام الرفع المحدث (باستخدام Cloudinary)
-    window.saveMyDataToCloud = async function() {
+    window.saveMyDataToCloud = async function(silent = false) {
         const user = auth.currentUser;
-        if (!user) {
-            var c = document.getElementById('cloud-login-screen');
-            if(c) { c.style.display = 'flex'; setTimeout(() => c.style.opacity = '1', 50); }
-            return;
-        }
+        if (!user) return;
 
         try {
             var t = document.getElementById('toast');
-            t.style.background = "var(--info)";
-            document.getElementById('toast-msg').innerText = "جاري معالجة ورفع الصور إلى Cloudinary... الرجاء الانتظار";
-            t.classList.add('show');
+            if(!silent) {
+                t.style.background = "var(--info)";
+                document.getElementById('toast-msg').innerText = "جاري الحفظ السحابي التلقائي...";
+                t.classList.add('show');
+            }
 
             let updatedClients = [];
 
-            // --- إعدادات Cloudinary (قم بتغييرها ببيانات حسابك) ---
-            const cloudName = 'dzqppbirp'; // تم وضع اسم السحابة
-            const uploadPreset = 'amer_app'; // تم وضع اسم الـ preset
+            const cloudName = 'dzqppbirp'; 
+            const uploadPreset = 'amer_app'; 
             const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-            // ----------------------------------------------------
 
-            // المرور على كل الزبائن لرفع الصور الجديدة فقط وتحويلها لروابط
             for (let i = 0; i < window.ClientsData.length; i++) {
                 let client = window.ClientsData[i];
                 let media = client.media;
                 let keys = ['id', 'hm', 'ct'];
 
                 for (let k of keys) {
-                    // لو الميديا عبارة عن كود صورة طويل (Base64)، ارفعها لـ Cloudinary وخد رابطها
                     if (media[k] && media[k].startsWith('data:image')) {
                         let formData = new FormData();
                         formData.append('file', media[k]);
                         formData.append('upload_preset', uploadPreset);
 
-                        let response = await fetch(cloudinaryUrl, {
-                            method: 'POST',
-                            body: formData
-                        });
-                        
+                        let response = await fetch(cloudinaryUrl, { method: 'POST', body: formData });
                         let data = await response.json();
                         
                         if (data.secure_url) {
-                            media[k] = data.secure_url; // استبدال الصورة الثقيلة بالرابط الخفيف
+                            media[k] = data.secure_url; 
                         } else {
                             throw new Error("فشل الرفع لـ Cloudinary: " + (data.error ? data.error.message : "حدث خطأ غير معروف"));
                         }
                     }
                 }
                 updatedClients.push(client);
-                
-                // تحديث الصورة في الذاكرة المحلية لتخفيف مساحة الهاتف أيضاً
                 window.AppDB.transaction("clients_store","readwrite").objectStore("clients_store").put(client);
             }
 
-            document.getElementById('toast-msg').innerText = "تم رفع الصور.. جاري حفظ البيانات النصية..";
-
-            // ضغط ورفع النصوص بعد تحويل الصور لروابط
             const dataStr = JSON.stringify(updatedClients);
             const compressedData = LZString.compressToUTF16(dataStr);
 
@@ -1425,34 +1430,37 @@
                 lastSaved: new Date().toISOString()
             });
 
-            setTimeout(() => t.classList.remove('show'), 1000);
-            setTimeout(() => {
-                document.getElementById('toast-msg').innerText = "تم الحفظ الاحترافي بنجاح!";
-                t.style.background = "var(--success)";
-                t.classList.add('show');
-                setTimeout(() => t.classList.remove('show'), 3000);
-            }, 1200);
+            if(!silent) {
+                setTimeout(() => t.classList.remove('show'), 1000);
+                setTimeout(() => {
+                    document.getElementById('toast-msg').innerText = "تم النسخ الاحتياطي التلقائي بنجاح!";
+                    t.style.background = "var(--success)";
+                    t.classList.add('show');
+                    setTimeout(() => t.classList.remove('show'), 3000);
+                }, 1200);
+            }
 
         } catch (e) {
-            alert("حدث خطأ أثناء الرفع: \n" + e.message);
             console.error(e);
-            t.classList.remove('show');
+            if(!silent) {
+                alert("حدث خطأ أثناء الرفع السحابي: \n" + e.message);
+                var t = document.getElementById('toast');
+                t.classList.remove('show');
+            }
         }
     };
 
-    window.loadMyDataFromCloud = async function() {
+    window.loadMyDataFromCloud = async function(isAutoLoad = false) {
         const user = auth.currentUser;
-        if (!user) {
-            var c = document.getElementById('cloud-login-screen');
-            if(c) { c.style.display = 'flex'; setTimeout(() => c.style.opacity = '1', 50); }
-            return;
-        }
+        if (!user) return;
 
         try {
             var t = document.getElementById('toast');
-            t.style.background = "var(--info)";
-            document.getElementById('toast-msg').innerText = "جاري الاسترجاع وفك الضغط...";
-            t.classList.add('show');
+            if(!isAutoLoad) {
+                t.style.background = "var(--info)";
+                document.getElementById('toast-msg').innerText = "جاري التحقق من النسخة السحابية...";
+                t.classList.add('show');
+            }
 
             const docSnap = await getDoc(doc(db, "users_data", user.uid));
             if (docSnap.exists() && docSnap.data().appData) {
@@ -1467,37 +1475,50 @@
                 const parsedData = JSON.parse(finalData);
 
                 if(Array.isArray(parsedData)) {
-                    const tx = window.AppDB.transaction("clients_store", "readwrite");
-                    const store = tx.objectStore("clients_store");
-                    store.clear();
-                    parsedData.forEach(client => store.add(client));
-                    tx.oncomplete = function() { 
-                        window.ClientsData = parsedData; 
-                        window.updateAreasData();
-                        if(typeof window.processFilters === 'function') window.processFilters(); 
-                        
-                        setTimeout(() => t.classList.remove('show'), 1000);
-                        setTimeout(() => {
-                            t.style.background = "var(--success)";
-                            document.getElementById('toast-msg').innerText = "تم استرجاع بياناتك بنجاح!";
-                            t.classList.add('show');
-                            setTimeout(() => t.classList.remove('show'), 3000);
-                            if(document.getElementById('allClientsPage') && document.getElementById('allClientsPage').style.display === 'flex') window.processAllFilters();
-                        }, 1200);
+                    const countReq = window.AppDB.transaction("clients_store", "readonly").objectStore("clients_store").count();
+                    countReq.onsuccess = function() {
+                        if (isAutoLoad && countReq.result > 0) {
+                            if(!isAutoLoad) t.classList.remove('show');
+                            window.saveMyDataToCloud(true);
+                            return;
+                        }
+
+                        const tx = window.AppDB.transaction("clients_store", "readwrite");
+                        const store = tx.objectStore("clients_store");
+                        store.clear();
+                        parsedData.forEach(client => store.add(client));
+                        tx.oncomplete = function() { 
+                            window.ClientsData = parsedData; 
+                            window.updateAreasData();
+                            if(typeof window.processFilters === 'function') window.processFilters(); 
+                            
+                            if(!isAutoLoad) {
+                                setTimeout(() => t.classList.remove('show'), 1000);
+                                setTimeout(() => {
+                                    t.style.background = "var(--success)";
+                                    document.getElementById('toast-msg').innerText = "تم استرجاع بياناتك بنجاح!";
+                                    t.classList.add('show');
+                                    setTimeout(() => t.classList.remove('show'), 3000);
+                                    if(document.getElementById('allClientsPage') && document.getElementById('allClientsPage').style.display === 'flex') window.processAllFilters();
+                                }, 1200);
+                            }
+                        };
                     };
                 }
             } else {
-                setTimeout(() => t.classList.remove('show'), 1000);
-                setTimeout(() => {
-                    t.style.background = "var(--danger)";
-                    document.getElementById('toast-msg').innerText = "لا توجد نسخة محفوظة في هذا الحساب";
-                    t.classList.add('show');
-                    setTimeout(() => t.classList.remove('show'), 3000);
-                }, 1200);
+                if(!isAutoLoad) {
+                    setTimeout(() => t.classList.remove('show'), 1000);
+                    setTimeout(() => {
+                        t.style.background = "var(--danger)";
+                        document.getElementById('toast-msg').innerText = "لا توجد نسخة محفوظة في هذا الحساب";
+                        t.classList.add('show');
+                        setTimeout(() => t.classList.remove('show'), 3000);
+                    }, 1200);
+                }
             }
         } catch (e) {
-            alert("خطأ في الاسترجاع: " + e.message);
-            t.classList.remove('show');
+            console.error(e);
+            if(!isAutoLoad) alert("خطأ في الاسترجاع: " + e.message);
         }
     };
 
