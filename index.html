@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
     
     <style>
         :root { 
@@ -21,7 +21,6 @@
             --border: #222222; --text-main: #ffffff; --text-muted: #888888;
             --danger: #ff3b30; --success: #32d74b; --warning: #ff9f0a; --info: #0a84ff;
         }
-        /* إضافة touch-action لتسريع استجابة اللمس وإزالة أي بطء */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; touch-action: manipulation; }
         body { background-color: var(--bg); color: var(--text-main); height: 100vh; overflow: hidden; position: fixed; width: 100%; overscroll-behavior: none; }
         .fade-in { animation: fadeIn 0.4s ease forwards; }
@@ -78,6 +77,7 @@
         
         .credits-grid { display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 12px; color: #999; font-weight: 600; line-height: 1.6; }
         .credits-item span { color: #fff; font-weight: 900; margin-right: 4px; font-size: 14px; }
+        .credits-item-support { color: #888; margin-top: 6px; font-size: 11px; font-weight: 600; }
         .credits-enjoy { font-size: 14px; color: var(--gold); font-weight: 900; margin-top: 15px; letter-spacing: 2px;}
         
         #lock-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #111 0%, #000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.6s ease; }
@@ -88,7 +88,6 @@
         .dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--gold); transition: all 0.3s ease; }
         .dot.active { background-color: var(--gold); box-shadow: 0 0 15px var(--gold); transform: scale(1.2); }
         .keypad { display: grid; grid-template-columns: repeat(3, 85px); gap: 25px; }
-        /* تسريع استجابة مفاتيح الأرقام */
         .key { width: 85px; height: 85px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); font-size: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s, background 0.05s; backdrop-filter: blur(5px); }
         .key:active { background: var(--gold); color: #000; transform: scale(0.9); border-color: var(--gold); }
         .key.action-key { background: var(--gold); color: #000; font-weight: 900; }
@@ -119,17 +118,15 @@
         .dash-card span { font-size: 10px; color: var(--text-muted); font-weight: 700; }
         .dash-card b { font-size: 15px; display: block; margin-top: 2px; font-weight: 900; }
 
-        /* العبارة الروحانية الجديدة بخط Aref Ruqaa */
         .spiritual-phrase { 
-            font-family: 'Aref Ruqaa', serif; 
+            font-family: 'Amiri', serif; 
             text-align: center; 
-            margin: 15px 0; 
+            margin: 40px 0 20px; 
             font-size: 26px; 
             font-weight: 700; 
             color: var(--gold); 
             text-shadow: 0 0 15px var(--gold-glow), 0 0 5px var(--gold); 
-            animation: pulseGlow 2.5s infinite alternate; 
-            letter-spacing: 0.5px;
+            animation: pulseGlow 3s infinite alternate; 
             padding: 0 10px;
         }
         @keyframes pulseGlow { from { opacity: 0.8; transform: scale(0.98); text-shadow: 0 0 10px var(--gold-glow); } to { opacity: 1; transform: scale(1.03); text-shadow: 0 0 25px var(--gold), 0 0 10px #fff; } }
@@ -138,8 +135,9 @@
         .search-wrapper { position: relative; margin-bottom: 12px; }
         .search-wrapper i { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 18px;}
         .main-search { width: 100%; background: var(--surface); border: 1px solid var(--border); padding: 15px 22px 15px 50px !important; border-radius: 20px !important; color: var(--text-main); font-size: 18px !important; height: 70px !important; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);}
-        .filters-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; align-items: center; }
-        .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); padding: 0 15px; border-radius: 15px; font-size: 14px; font-weight: 700; height: 60px; flex-shrink: 0; appearance: none; -webkit-appearance: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
+        
+        .filters-container { display: flex; gap: 5px; padding-bottom: 10px; width: 100%; justify-content: space-between; align-items: center; }
+        .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); padding: 0 5px; border-radius: 12px; font-size: 12px; font-weight: 700; height: 50px; flex: 1; min-width: 0; text-align: center; appearance: none; -webkit-appearance: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
         
         #all-clients-container, #late-clients-list { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
         
@@ -252,6 +250,7 @@
         <div class="credits-grid">
             <div class="credits-item">تطوير وبرمجة: <span>ابو ادم عامر</span></div>
             <div class="credits-item">تأسيس وتصميم: <span>عامر وليد</span></div>
+            <div class="credits-item-support">بدعم كلاً من: أحمد خالد، إسلام خالد، مجدي عطيفي</div>
         </div>
         <div class="credits-enjoy">AMER SYSTEM V20.0</div>
     </div>
@@ -329,7 +328,7 @@
         </div>
     </header>
 
-    <div class="spiritual-phrase fade-in">هل صليت علي النبي اليوم</div>
+    <div class="spiritual-phrase fade-in" id="dynamic-dhikr">هل صليت علي النبي اليوم؟</div>
 
     <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.15;">
         <i class="fas fa-shield-alt" style="font-size: 80px; color: var(--gold); margin-bottom: 15px;"></i>
@@ -544,8 +543,23 @@
     var currentEditClient = null;
     var currentMonthStatsType = '';
 
+    function setRandomDhikr() {
+        const dhikrList = [
+            "هل صليت علي النبي اليوم؟",
+            "ألا بذكر الله تطمئن القلوب",
+            "سبحان الله وبحمده، سبحان الله العظيم",
+            "استغفر الله العظيم وأتوب إليه",
+            "لا إله إلا الله محمد رسول الله",
+            "لا حول ولا قوة إلا بالله"
+        ];
+        const randomDhikr = dhikrList[Math.floor(Math.random() * dhikrList.length)];
+        const dhikrEl = document.getElementById('dynamic-dhikr');
+        if(dhikrEl) dhikrEl.innerText = randomDhikr;
+    }
+
     function bootSystem() { 
         initDatabase(); 
+        setRandomDhikr(); 
         setTimeout(function() {
             var splash = document.getElementById('splash-screen');
             splash.style.opacity = '0';
@@ -558,7 +572,7 @@
                     document.getElementById('app-core').style.opacity = '1';
                 }
             }, 800); 
-        }, 5200); // زيادة وقت الحقيبة والشاشة الافتتاحية بثانيتين
+        }, 5200); 
     }
     
     function enterPin(num) { if(currentPinInput.length<4) { currentPinInput+=num; updatePinUI(); } }
@@ -628,7 +642,6 @@
             var currVal = allFilter.value;
             allFilter.innerHTML = '<option value="ALL">📍 كل المناطق</option>';
             sortedAreas.forEach(function(a){ allFilter.add(new Option(a, a)); });
-            // إذا كانت المنطقة المحذوفة هي المحددة حالياً، نرجع الفلتر للكل
             if (currVal !== "ALL" && !uArea.has(currVal)) { allFilter.value = "ALL"; }
             else { allFilter.value = currVal || "ALL"; }
         }
@@ -866,7 +879,6 @@
         input.click();
     }
 
-    // دقة تحديد موقع احترافية جداً
     function startFastLocationTracking() {
         if (!navigator.geolocation) return triggerToast("جهازك لا يدعم تحديد الموقع", "error");
         
@@ -1035,7 +1047,7 @@
     function execDelete(uuid) { 
         if(confirm("مسح الزبون نهائياً؟")) { 
             ClientsData = ClientsData.filter(function(x){ return x.uuid !== uuid; });
-            updateAreasData(); // هذا السطر سيقوم بحذف المنطقة تلقائياً إذا لم يتبق زبائن فيها
+            updateAreasData(); 
             processFilters(); 
             if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters();
             closeModal('viewClientModal');
@@ -1229,7 +1241,6 @@
         };
     }
 
-    // نافذة التحقق الاحترافية للمدير
     window.openAdminPrompt = function() {
         document.getElementById('admin-pin-input').value = '';
         openModal('adminPinModal');
@@ -1252,6 +1263,8 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, setPersistence, browserLocalPersistence, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    // إضافة مكتبة Storage (تركتها لعدم حذف أي كود قديم كما أشرت)
+    import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBEUxhZcy_4voJGwS_x_GKmy6axlR4z5LQ",
@@ -1266,6 +1279,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const storage = getStorage(app); // تهيئة المخزن
     const provider = new GoogleAuthProvider();
 
     setPersistence(auth, browserLocalPersistence);
@@ -1321,7 +1335,7 @@
             }
         }).catch((error) => {
             if(btn) btn.innerHTML = originalText || '<i class="fab fa-google"></i> تسجيل الدخول بحساب جوجل';
-            alert("حدث خطأ أثناء الدخول: " + error.message + "\nتأكد من إضافة رابط التطبيق في Netlify إلى Domains في إعدادات Firebase.");
+            alert("حدث خطأ أثناء الدخول: " + error.message);
             console.error(error);
         });
     };
@@ -1337,114 +1351,156 @@
                 window.location.reload();
             }).catch((error) => {
                 btn.innerHTML = originalText;
-                alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
-                console.error(error);
+                alert("حدث خطأ: " + error.message);
             });
         }
     };
 
+    // نظام الرفع المحدث (باستخدام Cloudinary)
     window.saveMyDataToCloud = async function() {
         const user = auth.currentUser;
-        if (user) {
-            try {
-                var t = document.getElementById('toast');
-                t.style.background = "var(--gold)";
-                document.getElementById('toast-msg').innerText = "جاري ضغط ورفع النسخة لسحابة جوجل...";
-                t.classList.add('show');
-                
-                const dataStr = JSON.stringify(window.ClientsData);
-                const compressedData = LZString.compressToUTF16(dataStr);
-
-                await setDoc(doc(db, "users_data", user.uid), {
-                    email: user.email,
-                    appData: compressedData,
-                    isCompressed: true,
-                    lastSaved: new Date().toISOString()
-                });
-                
-                setTimeout(() => t.classList.remove('show'), 1000);
-                setTimeout(() => {
-                    document.getElementById('toast-msg').innerText = "تم الحفظ في حساب جوجل بنجاح!";
-                    t.style.background = "var(--success)";
-                    t.classList.add('show');
-                    setTimeout(() => t.classList.remove('show'), 3000);
-                }, 1200);
-
-            } catch (e) {
-                alert("خطأ في الحفظ: " + e.message);
-            }
-        } else {
+        if (!user) {
             var c = document.getElementById('cloud-login-screen');
-            if(c) {
-                c.style.display = 'flex';
-                setTimeout(() => c.style.opacity = '1', 50);
+            if(c) { c.style.display = 'flex'; setTimeout(() => c.style.opacity = '1', 50); }
+            return;
+        }
+
+        try {
+            var t = document.getElementById('toast');
+            t.style.background = "var(--info)";
+            document.getElementById('toast-msg').innerText = "جاري معالجة ورفع الصور إلى Cloudinary... الرجاء الانتظار";
+            t.classList.add('show');
+
+            let updatedClients = [];
+
+            // --- إعدادات Cloudinary (قم بتغييرها ببيانات حسابك) ---
+            const cloudName = 'dzqppbirp'; // تم وضع اسم السحابة
+            const uploadPreset = 'amer_app'; // تم وضع اسم الـ preset
+            const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+            // ----------------------------------------------------
+
+            // المرور على كل الزبائن لرفع الصور الجديدة فقط وتحويلها لروابط
+            for (let i = 0; i < window.ClientsData.length; i++) {
+                let client = window.ClientsData[i];
+                let media = client.media;
+                let keys = ['id', 'hm', 'ct'];
+
+                for (let k of keys) {
+                    // لو الميديا عبارة عن كود صورة طويل (Base64)، ارفعها لـ Cloudinary وخد رابطها
+                    if (media[k] && media[k].startsWith('data:image')) {
+                        let formData = new FormData();
+                        formData.append('file', media[k]);
+                        formData.append('upload_preset', uploadPreset);
+
+                        let response = await fetch(cloudinaryUrl, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        let data = await response.json();
+                        
+                        if (data.secure_url) {
+                            media[k] = data.secure_url; // استبدال الصورة الثقيلة بالرابط الخفيف
+                        } else {
+                            throw new Error("فشل الرفع لـ Cloudinary: " + (data.error ? data.error.message : "حدث خطأ غير معروف"));
+                        }
+                    }
+                }
+                updatedClients.push(client);
+                
+                // تحديث الصورة في الذاكرة المحلية لتخفيف مساحة الهاتف أيضاً
+                window.AppDB.transaction("clients_store","readwrite").objectStore("clients_store").put(client);
             }
+
+            document.getElementById('toast-msg').innerText = "تم رفع الصور.. جاري حفظ البيانات النصية..";
+
+            // ضغط ورفع النصوص بعد تحويل الصور لروابط
+            const dataStr = JSON.stringify(updatedClients);
+            const compressedData = LZString.compressToUTF16(dataStr);
+
+            await setDoc(doc(db, "users_data", user.uid), {
+                email: user.email,
+                appData: compressedData,
+                isCompressed: true,
+                lastSaved: new Date().toISOString()
+            });
+
+            setTimeout(() => t.classList.remove('show'), 1000);
+            setTimeout(() => {
+                document.getElementById('toast-msg').innerText = "تم الحفظ الاحترافي بنجاح!";
+                t.style.background = "var(--success)";
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 3000);
+            }, 1200);
+
+        } catch (e) {
+            alert("حدث خطأ أثناء الرفع: \n" + e.message);
+            console.error(e);
+            t.classList.remove('show');
         }
     };
 
     window.loadMyDataFromCloud = async function() {
         const user = auth.currentUser;
-        if (user) {
-            try {
-                var t = document.getElementById('toast');
-                t.style.background = "var(--info)";
-                document.getElementById('toast-msg').innerText = "جاري الاسترجاع وفك الضغط...";
-                t.classList.add('show');
-
-                const docSnap = await getDoc(doc(db, "users_data", user.uid));
-                if (docSnap.exists() && docSnap.data().appData) {
-                    
-                    let cloudData = docSnap.data();
-                    let finalData = cloudData.appData;
-
-                    if (cloudData.isCompressed) {
-                        finalData = LZString.decompressFromUTF16(cloudData.appData);
-                    }
-
-                    const parsedData = JSON.parse(finalData);
-
-                    if(Array.isArray(parsedData)) {
-                        const tx = window.AppDB.transaction("clients_store", "readwrite");
-                        const store = tx.objectStore("clients_store");
-                        store.clear();
-                        parsedData.forEach(client => store.add(client));
-                        tx.oncomplete = function() { 
-                            window.ClientsData = parsedData; 
-                            window.updateAreasData();
-                            if(typeof window.processFilters === 'function') window.processFilters(); 
-                            
-                            setTimeout(() => t.classList.remove('show'), 1000);
-                            setTimeout(() => {
-                                t.style.background = "var(--success)";
-                                document.getElementById('toast-msg').innerText = "تم استرجاع بياناتك بنجاح!";
-                                t.classList.add('show');
-                                setTimeout(() => t.classList.remove('show'), 3000);
-                                if(document.getElementById('allClientsPage') && document.getElementById('allClientsPage').style.display === 'flex') window.processAllFilters();
-                            }, 1200);
-                        };
-                    }
-                } else {
-                    setTimeout(() => t.classList.remove('show'), 1000);
-                    setTimeout(() => {
-                        t.style.background = "var(--danger)";
-                        document.getElementById('toast-msg').innerText = "لا توجد نسخة محفوظة في هذا الحساب";
-                        t.classList.add('show');
-                        setTimeout(() => t.classList.remove('show'), 3000);
-                    }, 1200);
-                }
-            } catch (e) {
-                alert("خطأ في الاسترجاع: " + e.message);
-            }
-        } else {
+        if (!user) {
             var c = document.getElementById('cloud-login-screen');
-            if(c) {
-                c.style.display = 'flex';
-                setTimeout(() => c.style.opacity = '1', 50);
+            if(c) { c.style.display = 'flex'; setTimeout(() => c.style.opacity = '1', 50); }
+            return;
+        }
+
+        try {
+            var t = document.getElementById('toast');
+            t.style.background = "var(--info)";
+            document.getElementById('toast-msg').innerText = "جاري الاسترجاع وفك الضغط...";
+            t.classList.add('show');
+
+            const docSnap = await getDoc(doc(db, "users_data", user.uid));
+            if (docSnap.exists() && docSnap.data().appData) {
+                
+                let cloudData = docSnap.data();
+                let finalData = cloudData.appData;
+
+                if (cloudData.isCompressed) {
+                    finalData = LZString.decompressFromUTF16(cloudData.appData);
+                }
+
+                const parsedData = JSON.parse(finalData);
+
+                if(Array.isArray(parsedData)) {
+                    const tx = window.AppDB.transaction("clients_store", "readwrite");
+                    const store = tx.objectStore("clients_store");
+                    store.clear();
+                    parsedData.forEach(client => store.add(client));
+                    tx.oncomplete = function() { 
+                        window.ClientsData = parsedData; 
+                        window.updateAreasData();
+                        if(typeof window.processFilters === 'function') window.processFilters(); 
+                        
+                        setTimeout(() => t.classList.remove('show'), 1000);
+                        setTimeout(() => {
+                            t.style.background = "var(--success)";
+                            document.getElementById('toast-msg').innerText = "تم استرجاع بياناتك بنجاح!";
+                            t.classList.add('show');
+                            setTimeout(() => t.classList.remove('show'), 3000);
+                            if(document.getElementById('allClientsPage') && document.getElementById('allClientsPage').style.display === 'flex') window.processAllFilters();
+                        }, 1200);
+                    };
+                }
+            } else {
+                setTimeout(() => t.classList.remove('show'), 1000);
+                setTimeout(() => {
+                    t.style.background = "var(--danger)";
+                    document.getElementById('toast-msg').innerText = "لا توجد نسخة محفوظة في هذا الحساب";
+                    t.classList.add('show');
+                    setTimeout(() => t.classList.remove('show'), 3000);
+                }, 1200);
             }
+        } catch (e) {
+            alert("خطأ في الاسترجاع: " + e.message);
+            t.classList.remove('show');
         }
     };
 
-    // دالة لوحة تحكم الإدارة
     window.loadAdminData = async function() {
         var list = document.getElementById('admin-backups-list');
         list.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="color:var(--gold); font-size:24px;"></i></div>';
