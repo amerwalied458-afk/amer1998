@@ -39,6 +39,7 @@
         #advanced-month-actions { z-index: 6000; } 
         #imageViewerModal { z-index: 7000; } 
         #customConfirmModal { z-index: 100005; }
+        #customSelectModal { z-index: 100006; }
         header { z-index: 100; } 
 
         #splash-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #111 0%, #000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease, transform 0.8s ease; overflow: hidden;}
@@ -159,7 +160,8 @@
         .main-search { width: 100%; background: var(--surface); border: 1px solid var(--border); padding: 15px 22px 15px 50px !important; border-radius: 20px !important; color: var(--text-main); font-size: 18px !important; height: 70px !important; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);}
         
         .filters-container { display: flex; gap: 5px; padding-bottom: 10px; width: 100%; justify-content: space-between; align-items: center; }
-        .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); padding: 0 5px; border-radius: 12px; font-size: 12px; font-weight: 700; height: 50px; flex: 1; min-width: 0; text-align: center; appearance: none; -webkit-appearance: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
+        .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); padding: 0 5px; border-radius: 12px; font-size: 12px; font-weight: 700; height: 50px; flex: 1; min-width: 0; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.1s; }
+        .filter-select:active { transform: scale(0.95); }
         
         #all-clients-container, #late-clients-list { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
         
@@ -189,7 +191,7 @@
         .close-btn:active { transform: scale(0.9); }
         .form-group { margin-bottom: 18px; }
         .form-label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
-        .form-input { width: 100%; background: var(--surface); border: 1px solid var(--border); padding: 18px 20px; border-radius: 20px; color: #fff; font-size: 15px; }
+        .form-input { width: 100%; background: var(--surface); border: 1px solid var(--border); padding: 18px 20px; border-radius: 20px; color: #fff; font-size: 15px; transition: 0.1s; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .month-selector { background: var(--surface); padding: 20px; border-radius: 20px; border: 1px solid var(--border); }
         .months-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; }
@@ -234,6 +236,15 @@
         .admin-item { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 10px; }
         .admin-item-info p { font-size: 14px; color: #fff; font-weight: bold; margin-bottom: 5px; }
         .admin-item-info span { font-size: 11px; color: var(--text-muted); }
+
+        /* تصميم القوائم المنسدلة الاحترافي الجديد */
+        .custom-select-option {
+            padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 15px;
+            color: #fff; font-size: 15px; font-weight: 700; display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer; transition: 0.1s;
+        }
+        .custom-select-option:active { transform: scale(0.98); background: var(--surface-hover); }
+        .custom-select-option.active { border-color: var(--gold); color: var(--gold); background: rgba(212, 175, 55, 0.1); }
     </style>
 
     <link rel="manifest" href="manifest.json">
@@ -252,6 +263,18 @@
         <h3 id="confirm-title" style="color: #fff; font-size: 18px; font-weight: 900; margin-bottom: 10px;"></h3>
         <p id="confirm-msg" style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px; line-height: 1.6;"></p>
         <div id="confirm-btns" style="display: flex; gap: 10px;">
+        </div>
+    </div>
+</div>
+
+<div id="customSelectModal" class="modal-overlay" style="align-items:flex-end; justify-content:center; background: rgba(0,0,0,0.8);">
+    <div class="modal-content slide-up" style="width: 100%; border-radius: 35px 35px 0 0; padding: 25px 20px; background: var(--bg); max-height: 80vh; display: flex; flex-direction: column;">
+        <div style="width: 40px; height: 5px; background: #333; border-radius: 10px; margin: 0 auto 20px;"></div>
+        <div class="m-head" style="margin-bottom: 15px;">
+            <h2 id="customSelectTitle" style="font-size: 18px; color: var(--gold);">اختر</h2>
+            <div class="close-btn" onclick="closeModal('customSelectModal')"><i class="fas fa-times"></i></div>
+        </div>
+        <div id="customSelectOptions" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;">
         </div>
     </div>
 </div>
@@ -403,9 +426,14 @@
             <i class="fas fa-search"></i>
         </div>
         <div class="filters-container">
-            <select id="all-flt-area" class="filter-select" onchange="processAllFilters()"><option value="ALL">📍 كل المناطق</option></select>
-            <select id="all-flt-day" class="filter-select" onchange="processAllFilters()"><option value="ALL">📅 كل الأيام</option></select>
-            <select id="all-flt-month" class="filter-select" onchange="processAllFilters()"><option value="ALL">🗓️ كل الشهور</option></select>
+            <div id="all-flt-area-display" class="filter-select" style="display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openCustomSelect('all-flt-area', 'اختر المنطقة للتصفية')">📍 كل المناطق</div>
+            <select id="all-flt-area" style="display:none;" onchange="syncSelectDisplay('all-flt-area'); processAllFilters()"><option value="ALL">📍 كل المناطق</option></select>
+            
+            <div id="all-flt-day-display" class="filter-select" style="display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openCustomSelect('all-flt-day', 'اختر اليوم للتصفية')">📅 كل الأيام</div>
+            <select id="all-flt-day" style="display:none;" onchange="syncSelectDisplay('all-flt-day'); processAllFilters()"><option value="ALL">📅 كل الأيام</option></select>
+            
+            <div id="all-flt-month-display" class="filter-select" style="display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openCustomSelect('all-flt-month', 'اختر الشهر للتصفية')">🗓️ كل الشهور</div>
+            <select id="all-flt-month" style="display:none;" onchange="syncSelectDisplay('all-flt-month'); processAllFilters()"><option value="ALL">🗓️ كل الشهور</option></select>
         </div>
     </div>
     <main id="all-clients-container"></main>
@@ -422,9 +450,14 @@
             <i class="fas fa-search"></i>
         </div>
         <div class="filters-container">
-            <select id="late-flt-area" class="filter-select" onchange="processLateFilters()"><option value="ALL">📍 كل المناطق</option></select>
-            <select id="late-flt-day" class="filter-select" onchange="processLateFilters()"><option value="ALL">📅 كل الأيام</option></select>
-            <select id="late-flt-month" class="filter-select" onchange="processLateFilters()"><option value="ALL">🗓️ كل الشهور</option></select>
+            <div id="late-flt-area-display" class="filter-select" style="display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openCustomSelect('late-flt-area', 'اختر المنطقة للتصفية')">📍 كل المناطق</div>
+            <select id="late-flt-area" style="display:none;" onchange="syncSelectDisplay('late-flt-area'); processLateFilters()"><option value="ALL">📍 كل المناطق</option></select>
+            
+            <div id="late-flt-day-display" class="filter-select" style="display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openCustomSelect('late-flt-day', 'اختر اليوم للتصفية')">📅 كل الأيام</div>
+            <select id="late-flt-day" style="display:none;" onchange="syncSelectDisplay('late-flt-day'); processLateFilters()"><option value="ALL">📅 كل الأيام</option></select>
+            
+            <div id="late-flt-month-display" class="filter-select" style="display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openCustomSelect('late-flt-month', 'اختر الشهر للتصفية')">🗓️ كل الشهور</div>
+            <select id="late-flt-month" style="display:none;" onchange="syncSelectDisplay('late-flt-month'); processLateFilters()"><option value="ALL">🗓️ كل الشهور</option></select>
         </div>
     </div>
     <main id="late-clients-list"></main>
@@ -443,7 +476,8 @@
             <div class="form-group"><label class="form-label">إجمالي المبلغ</label><input type="number" id="add-total" class="form-input" oninput="calculateInstallment()"></div>
             <div class="form-group">
                 <label class="form-label">يوم التحصيل</label>
-                <select id="add-day" class="form-input" style="background: #111;">
+                <div id="add-day-display" class="form-input" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;" onclick="openCustomSelect('add-day', 'اختر يوم التحصيل')"><span>يوم 5 في الشهر</span> <i class="fas fa-chevron-down" style="color:#555;"></i></div>
+                <select id="add-day" style="display:none;" onchange="syncSelectDisplay('add-day')">
                     <option value="5">يوم 5 في الشهر</option>
                     <option value="10">يوم 10 في الشهر</option>
                     <option value="15">يوم 15 في الشهر</option>
@@ -499,7 +533,8 @@
             <div class="form-group"><label class="form-label">إجمالي المبلغ</label><input type="number" id="edit-total" class="form-input" oninput="calculateEditInstallment()"></div>
             <div class="form-group">
                 <label class="form-label">يوم التحصيل</label>
-                <select id="edit-day" class="form-input" style="background: #111;">
+                <div id="edit-day-display" class="form-input" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;" onclick="openCustomSelect('edit-day', 'اختر يوم التحصيل')"><span>يوم 5 في الشهر</span> <i class="fas fa-chevron-down" style="color:#555;"></i></div>
+                <select id="edit-day" style="display:none;" onchange="syncSelectDisplay('edit-day')">
                     <option value="5">يوم 5 في الشهر</option>
                     <option value="10">يوم 10 في الشهر</option>
                     <option value="15">يوم 15 في الشهر</option>
@@ -544,13 +579,15 @@
         </div>
         <div id="adv-sub-delay" style="display:none; border-top:1px solid #333; padding-top:15px;">
             <label class="form-label">اختر يوم التأجيل (1-31):</label>
-            <select id="adv-delay-day" class="form-input" style="background:#000;"></select>
+            <div id="adv-delay-day-display" class="form-input" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom: 10px; background:#000;" onclick="openCustomSelect('adv-delay-day', 'اختر يوم التأجيل')"><span>يوم 1</span> <i class="fas fa-chevron-down" style="color:#555;"></i></div>
+            <select id="adv-delay-day" style="display:none;" onchange="syncSelectDisplay('adv-delay-day')"></select>
             <button class="btn btn-primary" style="width:100%;" onclick="executeAdvancedTask('delay')">تأكيد التأجيل</button>
         </div>
         <div id="adv-sub-part" style="display:none; border-top:1px solid #333; padding-top:15px;">
             <input type="number" id="adv-part-val" class="form-input" style="background:#000;" placeholder="المبلغ المدفوع">
             <label class="form-label">المتبقي هيندفع يوم:</label>
-            <select id="adv-part-day" class="form-input" style="background:#000;"></select>
+            <div id="adv-part-day-display" class="form-input" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom: 10px; background:#000;" onclick="openCustomSelect('adv-part-day', 'اختر يوم الدفع')"><span>يوم 1</span> <i class="fas fa-chevron-down" style="color:#555;"></i></div>
+            <select id="adv-part-day" style="display:none;" onchange="syncSelectDisplay('adv-part-day')"></select>
             <button class="btn btn-secondary" style="color:var(--gold); border-color:var(--gold); margin-bottom:10px; width:100%;" onclick="executeAdvancedTask('carry')">ترحيل المتبقي للشهر القادم ➡️</button>
             <button class="btn btn-primary" style="width:100%;" onclick="executeAdvancedTask('part')">حفظ الميعاد في نفس الشهر</button>
         </div>
@@ -627,6 +664,46 @@
     window.executeCustomConfirm = function() {
         if (confirmCallback) confirmCallback();
         window.closeCustomConfirm();
+    };
+
+    // نظام القوائم المنسدلة الاحترافي الجديد
+    function syncSelectDisplay(selectId) {
+        var sel = document.getElementById(selectId);
+        var disp = document.getElementById(selectId + '-display');
+        if(sel && disp) {
+            var text = sel.options.length > 0 && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex].text : '';
+            var span = disp.querySelector('span');
+            if(span) span.innerText = text;
+            else disp.innerText = text;
+        }
+    }
+
+    window.openCustomSelect = function(selectId, title) {
+        var sel = document.getElementById(selectId);
+        if(!sel) return;
+        document.getElementById('customSelectTitle').innerText = title;
+        var optsContainer = document.getElementById('customSelectOptions');
+        optsContainer.innerHTML = '';
+        
+        for(var i=0; i<sel.options.length; i++) {
+            var opt = sel.options[i];
+            var isSelected = (sel.value === opt.value);
+            var div = document.createElement('div');
+            div.className = 'custom-select-option ' + (isSelected ? 'active' : '');
+            div.innerHTML = opt.text + (isSelected ? ' <i class="fas fa-check"></i>' : '');
+            
+            div.onclick = (function(val) {
+                return function() {
+                    sel.value = val;
+                    var evt = new Event('change');
+                    sel.dispatchEvent(evt);
+                    closeModal('customSelectModal');
+                };
+            })(opt.value);
+            
+            optsContainer.appendChild(div);
+        }
+        openModal('customSelectModal');
     };
 
     function setRandomDhikr() {
@@ -733,6 +810,7 @@
             sortedAreas.forEach(function(a){ allFilter.add(new Option(a, a)); });
             if (currVal !== "ALL" && !uArea.has(currVal)) { allFilter.value = "ALL"; }
             else { allFilter.value = currVal || "ALL"; }
+            syncSelectDisplay('all-flt-area');
         }
         
         if(lateFilter) {
@@ -741,6 +819,7 @@
             sortedAreas.forEach(function(a){ lateFilter.add(new Option(a, a)); });
             if (currLateVal !== "ALL" && !uArea.has(currLateVal)) { lateFilter.value = "ALL"; }
             else { lateFilter.value = currLateVal || "ALL"; }
+            syncSelectDisplay('late-flt-area');
         }
     }
 
@@ -750,6 +829,8 @@
                 document.getElementById('all-flt-month').add(new Option(m, i+1)); 
                 document.getElementById('late-flt-month').add(new Option(m, i+1)); 
             });
+            syncSelectDisplay('all-flt-month');
+            syncSelectDisplay('late-flt-month');
         }
     }
 
@@ -759,10 +840,13 @@
         document.getElementById('all-flt-area').value = 'ALL';
         document.getElementById('all-flt-day').value = 'ALL';
         document.getElementById('all-flt-month').value = 'ALL';
+        syncSelectDisplay('all-flt-area');
+        syncSelectDisplay('all-flt-day');
+        syncSelectDisplay('all-flt-month');
         processAllFilters();
     }
 
-    function processAllFilters() {
+    window.processAllFilters = function() {
         var sTxt=document.getElementById('allSearchInput').value.toLowerCase();
         var fArea=document.getElementById('all-flt-area').value;
         var fDay=document.getElementById('all-flt-day').value;
@@ -801,8 +885,9 @@
 
         if(document.getElementById('all-flt-day').options.length<=1) {
             Array.from(uDay).sort(function(a,b){return a-b;}).forEach(function(d){ document.getElementById('all-flt-day').add(new Option("يوم " + d, d)); });
+            syncSelectDisplay('all-flt-day');
         }
-    }
+    };
 
     function processFilters() {
         var mStats={exp:0, col:0, rem:0};
@@ -837,10 +922,13 @@
         document.getElementById('late-flt-area').value = 'ALL';
         document.getElementById('late-flt-day').value = 'ALL';
         document.getElementById('late-flt-month').value = 'ALL';
+        syncSelectDisplay('late-flt-area');
+        syncSelectDisplay('late-flt-day');
+        syncSelectDisplay('late-flt-month');
         processLateFilters();
     }
 
-    function processLateFilters() {
+    window.processLateFilters = function() {
         var sTxt=document.getElementById('lateSearchInput').value.toLowerCase();
         var fArea=document.getElementById('late-flt-area').value;
         var fDay=document.getElementById('late-flt-day').value;
@@ -886,8 +974,9 @@
 
         if(document.getElementById('late-flt-day').options.length<=1) {
             Array.from(uDay).sort(function(a,b){return a-b;}).forEach(function(d){ document.getElementById('late-flt-day').add(new Option("يوم " + d, d)); });
+            syncSelectDisplay('late-flt-day');
         }
-    }
+    };
 
     function showMonthStats(type) {
         currentMonthStatsType = type;
@@ -954,15 +1043,27 @@
     function calculateInstallment() { var tot = parseFloat(document.getElementById('add-total').value); var disp = document.getElementById('expected-installment'); if(tot && newClientMonths.length>0) disp.innerText = Math.ceil(tot/newClientMonths.length).toLocaleString() + " ج / شهر"; else disp.innerText = "0 ج"; }
 
     function captureImage(key) {
-        var input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; 
+        var input = document.createElement('input'); 
+        input.type = 'file'; 
+        input.accept = 'image/*'; 
+        input.style.display = 'none';
+        document.body.appendChild(input); 
+
         input.onchange = function(e) {
-            var file = e.target.files[0]; if(!file) return;
+            var file = e.target.files[0]; 
+            if(!file) { 
+                if(input.parentNode) input.parentNode.removeChild(input); 
+                return; 
+            }
             createImageBitmap(file).then(function(bitmap) {
                 var canvas = document.createElement('canvas'); var ctx = canvas.getContext('2d');
                 var scale = 800 / bitmap.width; canvas.width = 800; canvas.height = bitmap.height * scale;
                 ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
                 var comp = canvas.toDataURL('image/jpeg', 0.6);
                 newClientMedia[key] = comp; var imgEl = document.getElementById('img-' + key); imgEl.src = comp; imgEl.style.display = "block"; imgEl.parentElement.classList.add('has-img');
+                if(input.parentNode) input.parentNode.removeChild(input);
+            }).catch(function() { 
+                if(input.parentNode) input.parentNode.removeChild(input); 
             });
         };
         input.click();
@@ -1034,6 +1135,8 @@
         document.getElementById('add-area').value = '';
         document.getElementById('add-product').value = '';
         document.getElementById('add-total').value = '';
+        document.getElementById('add-day').value = '5';
+        syncSelectDisplay('add-day');
         document.getElementById('add-phone').value = '';
         document.getElementById('add-notes').value = '';
         document.getElementById('add-loc-link').value = '';
@@ -1072,25 +1175,27 @@
     var advTargetUuid = null;
     var advTargetMonth = null;
 
-    function showMonthBox(uuid, mNum) {
+    window.showMonthBox = function(uuid, mNum) {
         advTargetUuid = uuid; advTargetMonth = mNum;
         document.getElementById('adv-month-title').innerText = "إجراءات شهر " + arMonths[mNum-1];
         var options = ''; for(var i=1; i<=31; i++) options += '<option value="' + i + '">يوم ' + i + '</option>';
         document.getElementById('adv-delay-day').innerHTML = options;
         document.getElementById('adv-part-day').innerHTML = options;
+        syncSelectDisplay('adv-delay-day');
+        syncSelectDisplay('adv-part-day');
         document.getElementById('advanced-month-actions').style.display = 'flex';
         toggleAdvSub('main');
-    }
+    };
 
-    function toggleAdvSub(type) {
+    window.toggleAdvSub = function(type) {
         document.getElementById('adv-main-btns').style.display = type === 'main' ? 'block' : 'none';
         document.getElementById('adv-sub-delay').style.display = type === 'delay' ? 'block' : 'none';
         document.getElementById('adv-sub-part').style.display = type === 'part' ? 'block' : 'none';
-    }
+    };
 
-    function closeAdvancedBox() { document.getElementById('advanced-month-actions').style.display = 'none'; }
+    window.closeAdvancedBox = function() { document.getElementById('advanced-month-actions').style.display = 'none'; }
 
-    function executeAdvancedTask(actionType) {
+    window.executeAdvancedTask = function(actionType) {
         var c = ClientsData.find(function(x){ return x.uuid === advTargetUuid; });
         var mName = arMonths[advTargetMonth-1];
         var dateStr = new Date().toLocaleString('ar-EG');
@@ -1128,7 +1233,7 @@
         
         closeAdvancedBox();
         updateClientInDB(c, "تم التحديث محلياً بنجاح");
-    }
+    };
 
     function updateClientInDB(c, msg) { 
         processFilters();
@@ -1142,7 +1247,7 @@
         }; 
     }
 
-    function execDelete(uuid) { 
+    window.execDelete = function(uuid) { 
         window.showCustomConfirm("تحذير الحذف", "هل أنت متأكد من مسح هذا الزبون نهائياً؟ لا يمكن التراجع عن هذا الإجراء.", "danger", function() {
             ClientsData = ClientsData.filter(function(x){ return x.uuid !== uuid; });
             updateAreasData(); 
@@ -1156,22 +1261,22 @@
                 if(window.saveMyDataToCloud) window.saveMyDataToCloud(true);
             }; 
         });
-    }
+    };
 
-    function triggerToast(msg, type) { var t=document.getElementById('toast'); t.style.background=type==="error"?"var(--danger)":"var(--gold)"; document.getElementById('toast-msg').innerText=msg; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); }, 3000); }
-    function openModal(id) { document.getElementById(id).style.display='flex'; }
-    function closeModal(id) { document.getElementById(id).style.display='none'; }
+    window.triggerToast = function(msg, type) { var t=document.getElementById('toast'); t.style.background=type==="error"?"var(--danger)":"var(--gold)"; document.getElementById('toast-msg').innerText=msg; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); }, 3000); };
+    window.openModal = function(id) { document.getElementById(id).style.display='flex'; };
+    window.closeModal = function(id) { document.getElementById(id).style.display='none'; };
     
-    function viewMedia(d) { 
+    window.viewMedia = function(d) { 
         if(d && d !== 'null') { 
             document.getElementById('viewer-img').src = d;
             openModal('imageViewerModal');
         } 
-    }
+    };
     
-    function openMapLink(l) { if(l && l !== 'null') window.open(l); }
+    window.openMapLink = function(l) { if(l && l !== 'null') window.open(l); };
     
-    function openEditModal(uuid) {
+    window.openEditModal = function(uuid) {
         currentEditClient = ClientsData.find(function(x) { return x.uuid === uuid; });
         if(!currentEditClient) return;
 
@@ -1188,6 +1293,7 @@
         }
         if(!dayExists) daySelect.add(new Option("يوم " + currentEditClient.collectionDay, currentEditClient.collectionDay));
         daySelect.value = currentEditClient.collectionDay;
+        syncSelectDisplay('edit-day');
         
         document.getElementById('edit-phone').value = currentEditClient.phone || "";
         document.getElementById('edit-notes').value = currentEditClient.addressNotes || ""; 
@@ -1220,16 +1326,16 @@
         calculateEditInstallment();
         closeModal('viewClientModal');
         openModal('editClientModal');
-    }
+    };
 
-    function calculateEditInstallment() {
+    window.calculateEditInstallment = function() {
         var tot = parseFloat(document.getElementById('edit-total').value);
         var disp = document.getElementById('edit-expected-installment');
         if(tot && editClientMonths.length > 0) disp.innerText = Math.ceil(tot/editClientMonths.length).toLocaleString() + " ج / شهر";
         else disp.innerText = "0 ج";
-    }
+    };
 
-    function toggleEditMonth(num) {
+    window.toggleEditMonth = function(num) {
         var cEl = document.getElementById('edit-mc-' + num);
         if(currentEditClient && currentEditClient.paidMonthsLog.indexOf(num) !== -1) return triggerToast('لا يمكن إزالة شهر تم دفعه', 'error');
         
@@ -1242,12 +1348,21 @@
             cEl.classList.add('selected');
         }
         calculateEditInstallment();
-    }
+    };
 
-    function captureEditImage(key) {
-        var input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; 
+    window.captureEditImage = function(key) {
+        var input = document.createElement('input'); 
+        input.type = 'file'; 
+        input.accept = 'image/*'; 
+        input.style.display = 'none';
+        document.body.appendChild(input);
+
         input.onchange = function(e) {
-            var file = e.target.files[0]; if(!file) return;
+            var file = e.target.files[0]; 
+            if(!file) { 
+                if(input.parentNode) input.parentNode.removeChild(input); 
+                return; 
+            }
             createImageBitmap(file).then(function(bitmap) {
                 var canvas = document.createElement('canvas'); var ctx = canvas.getContext('2d');
                 var scale = 800 / bitmap.width; canvas.width = 800; canvas.height = bitmap.height * scale;
@@ -1256,12 +1371,15 @@
                 editClientMedia[key] = comp; 
                 var imgEl = document.getElementById('edit-img-' + key); 
                 imgEl.src = comp; imgEl.style.display = "block"; imgEl.parentElement.classList.add('has-img');
+                if(input.parentNode) input.parentNode.removeChild(input);
+            }).catch(function() { 
+                if(input.parentNode) input.parentNode.removeChild(input); 
             });
         };
         input.click();
-    }
+    };
 
-    function startEditLocationTracking() {
+    window.startEditLocationTracking = function() {
         if (!navigator.geolocation) return window.showCustomConfirm("تنبيه", "جهازك لا يدعم تحديد الموقع", "danger", null, true);
         var btn = document.getElementById('btn-edit-gps');
         var originalText = btn.innerHTML;
@@ -1278,9 +1396,9 @@
             btn.innerHTML = originalText; btn.disabled = false;
             triggerToast("فشل التحديث، تأكد من الـ GPS", "error");
         }, options);
-    }
+    };
 
-    function processSaveEditClient() {
+    window.processSaveEditClient = function() {
         var name = document.getElementById('edit-name').value;
         var tot = parseFloat(document.getElementById('edit-total').value);
         
@@ -1331,7 +1449,7 @@
         req.onerror = function() {
             window.showCustomConfirm("خطأ", "حدث خطأ أثناء الحفظ", "danger", null, true);
         };
-    }
+    };
 
     window.openAdminPrompt = function() {
         document.getElementById('admin-pin-input').value = '';
