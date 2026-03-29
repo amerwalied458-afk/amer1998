@@ -38,6 +38,7 @@
         .modal-overlay { z-index: 5000; } 
         #advanced-month-actions { z-index: 6000; } 
         #imageViewerModal { z-index: 7000; } 
+        #customConfirmModal { z-index: 100005; }
         header { z-index: 100; } 
 
         #splash-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #111 0%, #000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease, transform 0.8s ease; overflow: hidden;}
@@ -118,18 +119,19 @@
 
         .spiritual-phrase { 
             font-family: 'Amiri', serif; 
+            font-style: italic;
             text-align: center; 
-            margin: 30px auto 20px; 
+            margin: 35px auto 25px; 
             font-size: 24px; 
             font-weight: 700; 
             color: var(--gold); 
             text-shadow: 0 0 15px var(--gold-glow), 0 0 5px var(--gold); 
             animation: pulseGlow 3s infinite alternate; 
-            padding: 15px 10px;
-            border: 2px solid rgba(212, 175, 55, 0.5);
-            border-radius: 20px;
-            background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(0, 0, 0, 0.8));
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8), inset 0 0 15px rgba(212, 175, 55, 0.15);
+            padding: 20px 15px;
+            border: 3px double var(--gold);
+            border-radius: 15px;
+            background: linear-gradient(145deg, rgba(20, 15, 0, 0.9), rgba(0, 0, 0, 0.95));
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px var(--gold-glow);
             width: 92%;
             position: relative;
             display: flex;
@@ -137,7 +139,17 @@
             justify-content: center;
             gap: 10px;
         }
-        .spiritual-phrase i { font-size: 18px; color: var(--gold); opacity: 0.9; }
+        .spiritual-phrase::before, .spiritual-phrase::after {
+            content: '❁';
+            position: absolute;
+            color: var(--gold);
+            font-size: 20px;
+            opacity: 0.8;
+            text-shadow: 0 0 10px var(--gold-glow);
+        }
+        .spiritual-phrase::before { top: 8px; right: 12px; }
+        .spiritual-phrase::after { bottom: 8px; left: 12px; }
+        .spiritual-phrase i { font-size: 20px; color: var(--gold); opacity: 0.9; }
         
         @keyframes pulseGlow { from { opacity: 0.8; transform: scale(0.98); text-shadow: 0 0 10px var(--gold-glow); } to { opacity: 1; transform: scale(1.03); text-shadow: 0 0 25px var(--gold), 0 0 10px #fff; } }
         
@@ -234,6 +246,16 @@
 </head>
 <body onload="bootSystem()">
 
+<div id="customConfirmModal" class="modal-overlay" style="align-items:center; justify-content:center; background: rgba(0,0,0,0.95);">
+    <div class="slide-up" style="background: var(--surface); padding: 30px 25px; border-radius: 25px; border: 1px solid var(--border); text-align: center; width: 85%; max-width: 350px; box-shadow: 0 15px 50px rgba(0,0,0,0.9);">
+        <i id="confirm-icon" class="fas fa-exclamation-circle" style="font-size: 45px; margin-bottom: 20px;"></i>
+        <h3 id="confirm-title" style="color: #fff; font-size: 18px; font-weight: 900; margin-bottom: 10px;"></h3>
+        <p id="confirm-msg" style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px; line-height: 1.6;"></p>
+        <div id="confirm-btns" style="display: flex; gap: 10px;">
+        </div>
+    </div>
+</div>
+
 <datalist id="areas-list"></datalist>
 
 <div id="splash-screen">
@@ -252,8 +274,7 @@
             <span class="bag-text">أقساطك</span>
         </div>
         
-        <h1 class="amer-brand slide-up" style="margin-bottom: 0;">AMER</h1>
-        <div class="slide-up" style="color: #fff; font-size: 24px; font-weight: 900; letter-spacing: 15px; margin-top: 5px; margin-right: -15px; text-shadow: 0 0 15px rgba(255,255,255,0.3);">ABDO</div>
+        <h1 class="amer-brand slide-up" style="font-size: 38px; letter-spacing: 2px;">AMER AND ABDO</h1>
     </div>
     
     <div class="splash-credits-new">
@@ -271,8 +292,7 @@
 
 <div id="lock-screen">
     <div class="lock-brand">
-        <h1 style="margin-bottom: 0;">أقساطك</h1>
-        <div style="color: var(--gold); font-size: 20px; font-weight: 900; letter-spacing: 12px; margin-top: 5px; margin-right: -12px; text-shadow: 0 0 15px var(--gold-glow);">ABDO</div>
+        <h1 class="amer-brand" style="font-size: 38px; letter-spacing: 2px; margin-bottom: 0;">AMER AND ABDO</h1>
         <p>AMER SYSTEM V20.0</p>
     </div>
     <div class="pin-dots" id="pin-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
@@ -555,6 +575,59 @@
     var editClientMonths = [];
     var currentEditClient = null;
     var currentMonthStatsType = '';
+
+    // نظام التنبيهات الاحترافي الجديد
+    let confirmCallback = null;
+    window.showCustomConfirm = function(title, msg, type, callback, isAlert = false) {
+        document.getElementById('confirm-title').innerText = title;
+        document.getElementById('confirm-msg').innerText = msg;
+        
+        var icon = document.getElementById('confirm-icon');
+        var btnContainer = document.getElementById('confirm-btns');
+
+        var btnColor = '';
+        var btnBg = '';
+
+        if(type === 'danger') {
+            icon.className = 'fas fa-exclamation-triangle';
+            icon.style.color = 'var(--danger)';
+            icon.style.textShadow = '0 0 15px rgba(255,59,48,0.3)';
+            btnBg = 'var(--danger)';
+            btnColor = '#fff';
+        } else if (type === 'warning') {
+            icon.className = 'fas fa-question-circle';
+            icon.style.color = 'var(--warning)';
+            icon.style.textShadow = '0 0 15px rgba(255,159,10,0.3)';
+            btnBg = 'var(--warning)';
+            btnColor = '#000';
+        } else {
+            icon.className = 'fas fa-info-circle';
+            icon.style.color = 'var(--info)';
+            icon.style.textShadow = '0 0 15px rgba(10,132,255,0.3)';
+            btnBg = 'var(--info)';
+            btnColor = '#fff';
+        }
+
+        if (isAlert) {
+            btnContainer.innerHTML = '<button class="btn btn-primary" onclick="closeCustomConfirm()" style="padding: 15px; font-size: 14px; width: 100%; background: var(--gold); color: #000; border: none;">حسناً</button>';
+        } else {
+            btnContainer.innerHTML = '<button class="btn btn-secondary" onclick="closeCustomConfirm()" style="padding: 15px; font-size: 14px; flex: 1;">إلغاء</button>' +
+                                     '<button id="confirm-yes-btn" class="btn btn-primary" onclick="executeCustomConfirm()" style="padding: 15px; font-size: 14px; flex: 1; border: none; background: ' + btnBg + '; color: ' + btnColor + ';">تأكيد</button>';
+        }
+
+        confirmCallback = callback;
+        document.getElementById('customConfirmModal').style.display = 'flex';
+    };
+
+    window.closeCustomConfirm = function() {
+        document.getElementById('customConfirmModal').style.display = 'none';
+        confirmCallback = null;
+    };
+
+    window.executeCustomConfirm = function() {
+        if (confirmCallback) confirmCallback();
+        window.closeCustomConfirm();
+    };
 
     function setRandomDhikr() {
         const dhikrList = [
@@ -896,7 +969,7 @@
     }
 
     function startFastLocationTracking() {
-        if (!navigator.geolocation) return triggerToast("جهازك لا يدعم تحديد الموقع", "error");
+        if (!navigator.geolocation) return window.showCustomConfirm("تنبيه", "جهازك لا يدعم تحديد الموقع", "danger", null, true);
         
         var btn = document.getElementById('btn-gps');
         var originalText = btn.innerHTML;
@@ -974,7 +1047,7 @@
         tx.objectStore("clients_store").add(client);
         tx.oncomplete = function() { 
             triggerToast("تم الإضافة محلياً بنجاح"); 
-            if(window.saveMyDataToCloud) window.saveMyDataToCloud();
+            if(window.saveMyDataToCloud) window.saveMyDataToCloud(true);
         };
     }
 
@@ -992,7 +1065,7 @@
 
         document.getElementById('view-dynamic-content').innerHTML = '<div class="m-head"><h2 style="font-size:20px;">' + c.name + '</h2><div class="close-btn" onclick="closeModal(\'viewClientModal\')"><i class="fas fa-times"></i></div></div><div class="dash-card" style="margin-bottom:20px;"><div style="display:flex; justify-content:space-between;"><div><span>المتبقي</span><b style="color:var(--danger)">' + rem.toLocaleString() + ' ج</b></div><div style="text-align:left"><span>القسط</span><b style="color:var(--gold)">' + c.monthlyInstallment + ' ج</b></div></div></div>' + 
         '<div class="dash-card" style="margin-bottom:20px;"><span style="color:var(--text-muted); font-size:11px;">العنوان / ملاحظات:</span><p style="font-size:13px; color:#fff; margin-top:5px; line-height:1.5;">' + (c.addressNotes || 'لا يوجد ملاحظات مسجلة') + '</p></div>' + 
-        '<div><label class="form-label">خطة التقسيط (اضغط على الشهر للإجراء)</label><div class="months-grid">' + mHtml + '</div></div><div class="media-grid"><div class="media-box ' + (c.media.id?'has-img':'') + '" onclick="viewMedia(\'' + c.media.id + '\')">' + (c.media.id?'<img src="' + c.media.id + '" style="display:block">':'<i class="fas fa-id-card"></i>') + '</div><div class="media-box ' + (c.media.hm?'has-img':'') + '" onclick="viewMedia(\'' + c.media.hm + '\')">' + (c.media.hm?'<img src="' + c.media.hm + '" style="display:block">':'<i class="fas fa-home"></i>') + '</div><div class="media-box ' + (c.media.ct?'has-img':'') + '" onclick="viewMedia(\'' + c.media.ct + '\')">' + (c.media.ct?'<img src="' + c.media.ct + '" style="display:block">':'<i class="fas fa-file-signature"></i>') + '</div></div><div class="action-grid" style="margin-top:10px;"><div class="action-card" onclick="window.open(\'tel:' + c.phone + '\')"><i class="fas fa-phone-alt" style="color:var(--info);"></i></div><div class="action-card" onclick="window.open(\'https://wa.me/2' + c.phone + '\')"><i class="fab fa-whatsapp" style="color:#25D366;"></i></div><div class="action-card" onclick="openMapLink(\'' + c.media.loc + '\')"><i class="fas fa-map-marker-alt" style="color:var(--danger);"></i></div></div><div class="history-section"><div class="history-title">سجل العمليات لعامر</div>' + hHtml + '</div><button class="btn btn-primary" style="margin-top:30px; background:var(--info); color:#fff; border-color:var(--info);" onclick="openEditModal(\'' + c.uuid + '\')"><i class="fas fa-edit"></i> تعديل بيانات الزبون</button><button class="btn" style="background:rgba(255,59,48,0.1); color:var(--danger); margin-top:10px;" onclick="execDelete(\'' + c.uuid + '\')"><i class="fas fa-trash-alt"></i> مسح الملف نهائياً</button>';
+        '<div><label class="form-label">خطة التقسيط (اضغط على الشهر للإجراء)</label><div class="months-grid">' + mHtml + '</div></div><div class="media-grid"><div class="media-box ' + (c.media.id?'has-img':'') + '" onclick="viewMedia(\'' + c.media.id + '\')">' + (c.media.id?'<img src="' + c.media.id + '" style="display:block">':'<i class="fas fa-id-card"></i>') + '</div><div class="media-box ' + (c.media.hm?'has-img':'') + '" onclick="viewMedia(\'' + c.media.hm + '\')">' + (c.media.hm?'<img src="' + c.media.hm + '" style="display:block">':'<i class="fas fa-home"></i>') + '</div><div class="media-box ' + (c.media.ct?'has-img':'') + '" onclick="viewMedia(\'' + c.media.ct + '\')">' + (c.media.ct?'<img src="' + c.media.ct + '" style="display:block">':'<i class="fas fa-file-signature"></i>') + '</div></div><div class="action-grid" style="margin-top:10px;"><div class="action-card" onclick="window.open(\'tel:' + c.phone + '\')"><i class="fas fa-phone-alt" style="color:var(--info);"></i></div><div class="action-card" onclick="window.open(\'https://wa.me/2' + c.phone + '\')"><i class="fab fa-whatsapp" style="color:#25D366;"></i></div><div class="action-card" onclick="openMapLink(\'' + c.media.loc + '\')"><i class="fas fa-map-marker-alt" style="color:var(--danger);"></i></div></div><div class="history-section"><div class="history-title">المال المحصل من الزبون</div>' + hHtml + '</div><button class="btn btn-primary" style="margin-top:30px; background:var(--info); color:#fff; border-color:var(--info);" onclick="openEditModal(\'' + c.uuid + '\')"><i class="fas fa-edit"></i> تعديل بيانات الزبون</button><button class="btn" style="background:rgba(255,59,48,0.1); color:var(--danger); margin-top:10px;" onclick="execDelete(\'' + c.uuid + '\')"><i class="fas fa-trash-alt"></i> مسح الملف نهائياً</button>';
         openModal('viewClientModal');
     }
 
@@ -1023,12 +1096,15 @@
         var dateStr = new Date().toLocaleString('ar-EG');
         
         if (actionType === 'full') {
-            if(confirm("تأكيد الدفع للشهر؟")) {
+            window.showCustomConfirm("تأكيد الدفع", "هل أنت متأكد من دفع قسط هذا الشهر كاملاً؟", "info", function() {
                 c.paidAmount += c.monthlyInstallment;
                 c.paidMonthsLog.push(advTargetMonth);
                 c.historyLog.push({action: "دفع قسط " + mName + " كاملاً", val: c.monthlyInstallment, timestamp: dateStr});
                 c.statusMsg = "دفع " + mName + " ✅";
-            } else return;
+                closeAdvancedBox();
+                updateClientInDB(c, "تم التحديث محلياً بنجاح");
+            });
+            return;
         } else if (actionType === 'delay') {
             var day = document.getElementById('adv-delay-day').value;
             c.historyLog.push({action: "تأجيل قسط " + mName + " ليوم " + day, val: 0, timestamp: dateStr});
@@ -1062,12 +1138,12 @@
         if(document.getElementById('monthStatsModal').style.display === 'flex') showMonthStats(currentMonthStatsType);
         AppDB.transaction("clients_store","readwrite").objectStore("clients_store").put(c).oncomplete=function(){ 
             triggerToast(msg); 
-            if(window.saveMyDataToCloud) window.saveMyDataToCloud();
+            if(window.saveMyDataToCloud) window.saveMyDataToCloud(true);
         }; 
     }
 
     function execDelete(uuid) { 
-        if(confirm("مسح الزبون نهائياً؟")) { 
+        window.showCustomConfirm("تحذير الحذف", "هل أنت متأكد من مسح هذا الزبون نهائياً؟ لا يمكن التراجع عن هذا الإجراء.", "danger", function() {
             ClientsData = ClientsData.filter(function(x){ return x.uuid !== uuid; });
             updateAreasData(); 
             processFilters(); 
@@ -1077,9 +1153,9 @@
             if(document.getElementById('monthStatsModal').style.display === 'flex') showMonthStats(currentMonthStatsType);
             AppDB.transaction("clients_store","readwrite").objectStore("clients_store").delete(uuid).oncomplete=function(){ 
                 triggerToast("تم الحذف بنجاح"); 
-                if(window.saveMyDataToCloud) window.saveMyDataToCloud();
+                if(window.saveMyDataToCloud) window.saveMyDataToCloud(true);
             }; 
-        } 
+        });
     }
 
     function triggerToast(msg, type) { var t=document.getElementById('toast'); t.style.background=type==="error"?"var(--danger)":"var(--gold)"; document.getElementById('toast-msg').innerText=msg; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); }, 3000); }
@@ -1186,7 +1262,7 @@
     }
 
     function startEditLocationTracking() {
-        if (!navigator.geolocation) return triggerToast("جهازك لا يدعم تحديد الموقع", "error");
+        if (!navigator.geolocation) return window.showCustomConfirm("تنبيه", "جهازك لا يدعم تحديد الموقع", "danger", null, true);
         var btn = document.getElementById('btn-edit-gps');
         var originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i>'; btn.disabled = true;
@@ -1245,7 +1321,7 @@
             if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters();
             closeModal('editClientModal'); 
             triggerToast("تم حفظ التعديلات محلياً");
-            if(window.saveMyDataToCloud) window.saveMyDataToCloud();
+            if(window.saveMyDataToCloud) window.saveMyDataToCloud(true);
             
             setTimeout(function() { 
                 openClientDetails(currentEditClient.uuid); 
@@ -1253,7 +1329,7 @@
         };
 
         req.onerror = function() {
-            triggerToast("حدث خطأ أثناء الحفظ", "error");
+            window.showCustomConfirm("خطأ", "حدث خطأ أثناء الحفظ", "danger", null, true);
         };
     }
 
@@ -1356,13 +1432,13 @@
             }
         }).catch((error) => {
             if(btn) btn.innerHTML = originalText || '<i class="fab fa-google"></i> تسجيل الدخول بحساب جوجل';
-            alert("حدث خطأ أثناء الدخول: " + error.message);
+            window.showCustomConfirm("خطأ في الدخول", "حدث خطأ أثناء الدخول: " + error.message, "danger", null, true);
             console.error(error);
         });
     };
 
     window.logoutGoogle = function() {
-        if(confirm("هل أنت متأكد أنك تريد تسجيل الخروج من حساب جوجل؟")) {
+        window.showCustomConfirm("تسجيل الخروج", "هل أنت متأكد أنك تريد تسجيل الخروج من حساب جوجل؟", "warning", function() {
             var btn = document.querySelector('.fa-sign-out-alt').parentElement;
             var originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -1372,9 +1448,9 @@
                 window.location.reload();
             }).catch((error) => {
                 btn.innerHTML = originalText;
-                alert("حدث خطأ: " + error.message);
+                window.showCustomConfirm("خطأ", "حدث خطأ: " + error.message, "danger", null, true);
             });
-        }
+        });
     };
 
     window.saveMyDataToCloud = async function(silent = false) {
@@ -1443,9 +1519,9 @@
         } catch (e) {
             console.error(e);
             if(!silent) {
-                alert("حدث خطأ أثناء الرفع السحابي: \n" + e.message);
                 var t = document.getElementById('toast');
                 t.classList.remove('show');
+                window.showCustomConfirm("خطأ سحابي", "حدث خطأ أثناء الرفع السحابي:\n" + e.message, "danger", null, true);
             }
         }
     };
@@ -1518,7 +1594,7 @@
             }
         } catch (e) {
             console.error(e);
-            if(!isAutoLoad) alert("خطأ في الاسترجاع: " + e.message);
+            if(!isAutoLoad) window.showCustomConfirm("خطأ استرجاع", "خطأ في الاسترجاع: " + e.message, "danger", null, true);
         }
     };
 
@@ -1559,7 +1635,7 @@
     };
 
     window.deleteUserBackup = async function(docId, email) {
-        if(confirm(`تحذير أمني:\nهل أنت متأكد من مسح النسخة الاحتياطية الخاصة بـ:\n${email}\nهذا الإجراء سيقوم بحذف بياناته نهائياً ولا يمكن التراجع عنه!`)) {
+        window.showCustomConfirm("تحذير أمني خطير", "هل أنت متأكد من مسح النسخة الاحتياطية الخاصة بـ:\n" + email + "\nهذا الإجراء سيقوم بحذف بياناته نهائياً ولا يمكن التراجع عنه!", "danger", async function() {
             try {
                 var btn = document.querySelector(`#admin-doc-${docId} button`);
                 var originalHtml = btn.innerHTML;
@@ -1575,11 +1651,13 @@
                 t.classList.add('show');
                 setTimeout(() => t.classList.remove('show'), 3000);
             } catch (e) {
-                alert("خطأ أثناء المسح: " + e.message);
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
+                window.showCustomConfirm("خطأ مسح", "خطأ أثناء المسح: " + e.message, "danger", null, true);
+                if (btn) {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
             }
-        }
+        });
     };
 </script>
 
