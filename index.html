@@ -397,11 +397,9 @@
            تصميم الأذكار والبرواز المزخرف (الرقعة الاحترافي)
            ========================================= */
         .spiritual-phrase { 
-            font-family: 'Aref Ruqaa', serif; 
             text-align: center; 
             margin: 20px 15px 25px; 
             font-size: 34px; 
-            font-weight: 700;
             color: #fff4a3; 
             padding: 25px 20px; 
             background: linear-gradient(135deg, #1f1805 0%, #0a0800 100%); 
@@ -418,6 +416,12 @@
             outline-offset: -8px; 
         }
 
+        /* الإجبار القوي لخط الرقعة ليقهر خط كايرو */
+        .spiritual-phrase span, .spiritual-phrase i {
+            font-family: 'Aref Ruqaa', serif !important; 
+            font-weight: 700 !important;
+        }
+
         .spiritual-phrase::before, 
         .spiritual-phrase::after { 
             content: '۞'; 
@@ -427,11 +431,11 @@
             font-size: 28px; 
             color: var(--gold); 
             opacity: 0.8; 
+            font-family: 'Cairo', sans-serif; /* لضمان ظهور النجمة بشكل سليم */
         }
 
         .spiritual-phrase::before { right: 15px; } 
         .spiritual-phrase::after { left: 15px; }
-        .spiritual-phrase i { font-size: 28px; color: var(--gold); }
         
         /* =========================================
            أدوات البحث والفلترة
@@ -691,10 +695,11 @@
         }
         .toast.show { transform: translateY(0); opacity: 1; }
 
+        /* تعديل زر الرجوع ليكون في اليسار ومرتفع عن الشريط السفلي */
         .floating-back-btn {
             position: fixed; 
-            bottom: 25px; 
-            right: 25px; 
+            bottom: 90px; 
+            left: 20px; 
             width: 50px; 
             height: 50px; 
             background: var(--surface);
@@ -708,6 +713,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.8); 
             cursor: pointer; 
             transition: transform 0.1s;
+            z-index: 10000;
         }
         .floating-back-btn:active { transform: scale(0.9); background: var(--gold); color: #000; }
 
