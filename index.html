@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         /* =========================================
@@ -82,6 +83,7 @@
 
         @keyframes bagPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
+        /* اللوجو המزدوج بناءً على طلبك */
         .amer-brand { font-family: sans-serif; font-weight: 900; color: var(--gold); position: relative; text-transform: uppercase; background: linear-gradient(to right, var(--gold) 20%, #fff 40%, #fff 60%, var(--gold) 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; filter: drop-shadow(0 0 15px var(--gold-glow)); }
         .brand-sub { font-size: 25px; letter-spacing: 12px; display: block; margin-top: 10px; color: #fff; -webkit-text-fill-color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); font-weight: 700; }
 
@@ -142,57 +144,41 @@
         .dash-card b { font-size: 15px; display: block; margin-top: 2px; font-weight: 900; }
 
         /* =========================================
-           تصميم الأذكار الإسلامية الفخمة بالخط العثماني
+           تصميم الأذكار والبرواز المزخرف
            ========================================= */
         .spiritual-phrase { 
-            font-family: 'Amiri', serif; 
+            font-family: 'Aref Ruqaa', serif; /* خط الرقعة الجديد */
             text-align: center; 
             margin: 25px auto 30px; 
-            font-size: 26px; 
-            font-weight: 900; 
-            color: #fce28b; 
-            padding: 35px 20px;
-            background: radial-gradient(circle at center, #0e1a12 0%, #050804 80%); /* خلفية خضراء داكنة إسلامية */
+            font-size: 32px; 
+            font-weight: 700; 
+            color: #ffdf73; 
+            padding: 30px 20px;
+            background: radial-gradient(circle, #2a2000 0%, #050400 80%);
             border: 2px solid var(--gold);
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(212,175,55,0.2), inset 0 0 40px rgba(212,175,55,0.15);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(212,175,55,0.4), inset 0 0 25px rgba(212,175,55,0.2);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 15px;
             letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-            line-height: 1.6;
+            text-shadow: 0 0 20px rgba(212,175,55,0.8);
+            outline: 1px dashed rgba(212,175,55,0.5);
+            outline-offset: -8px;
         }
         .spiritual-phrase::before {
             content: '۞';
-            position: absolute; top: 8px; right: 15px;
-            font-size: 24px; color: var(--gold); opacity: 0.9;
-            text-shadow: 0 0 10px var(--gold-glow);
+            position: absolute; top: 10px; right: 15px;
+            font-size: 22px; color: rgba(212,175,55,0.6);
         }
         .spiritual-phrase::after {
             content: '۞';
-            position: absolute; top: 8px; left: 15px;
-            font-size: 24px; color: var(--gold); opacity: 0.9;
-            text-shadow: 0 0 10px var(--gold-glow);
+            position: absolute; top: 10px; left: 15px;
+            font-size: 22px; color: rgba(212,175,55,0.6);
         }
-        .spiritual-phrase-inner {
-            position: absolute;
-            inset: 6px;
-            border: 1px dashed rgba(212,175,55,0.4);
-            border-radius: 8px;
-            pointer-events: none;
-        }
-        .spiritual-phrase-bg {
-            position: absolute;
-            inset: 0;
-            background-image: radial-gradient(rgba(212,175,55,0.15) 1px, transparent 1px);
-            background-size: 12px 12px;
-            opacity: 0.6;
-            pointer-events: none;
-            border-radius: 10px;
-        }
+        .spiritual-phrase i { font-size: 28px; color: var(--gold); text-shadow: 0 0 15px var(--gold-glow); z-index: 2; }
         
         /* =========================================
            أدوات البحث والفلترة
@@ -453,13 +439,7 @@
         </div>
     </header>
 
-    <div class="spiritual-phrase fade-in">
-        <div class="spiritual-phrase-bg"></div>
-        <div class="spiritual-phrase-inner"></div>
-        <i class="fas fa-mosque" style="z-index: 1;"></i>
-        <span id="dynamic-dhikr" style="z-index: 1;">هَلْ صَلَّيْتَ عَلَى النَّبِيِّ اليَوْمَ؟</span>
-        <i class="fas fa-star-and-crescent" style="z-index: 1;"></i>
-    </div>
+    <div class="spiritual-phrase fade-in"><i class="fas fa-star-and-crescent"></i> <span id="dynamic-dhikr">هل صليت علي النبي اليوم؟</span></div>
 
     <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.15;">
         <i class="fas fa-shield-alt" style="font-size: 80px; color: var(--gold); margin-bottom: 15px;"></i>
@@ -577,14 +557,13 @@
         <div class="form-group"><label class="form-label">العنوان / ملاحظات</label><textarea id="add-notes" class="form-input" rows="2" style="resize:none;" placeholder="اكتب العنوان بالتفصيل أو أي ملاحظة..."></textarea></div>
         <div class="form-group"><label class="form-label"><i class="fas fa-link"></i> رابط الموقع الخارجي (اختياري)</label><input type="url" id="add-loc-link" class="form-input" placeholder="انسخ رابط جوجل ماب هنا..."></div>
 
-        <div class="media-grid">
-            <div class="media-box" id="add-loc-box" onclick="startFastLocationTracking()"><i class="fas fa-map-marker-alt" style="font-size:20px;"></i><span style="margin-top:4px;">حفظ الموقع</span></div>
-            <div class="media-box" onclick="captureImage('hm')"><i class="fas fa-home" style="font-size:20px;"></i><span style="margin-top:4px;">المنزل</span><img id="img-hm"></div>
-            <div class="media-box" onclick="captureImage('ct')"><i class="fas fa-file-signature" style="font-size:20px;"></i><span style="margin-top:4px;">العقد</span><img id="img-ct"></div>
+        <div class="media-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="media-box" onclick="captureImage('hm')"><i class="fas fa-home"></i><span>المنزل</span><img id="img-hm"></div>
+            <div class="media-box" onclick="captureImage('ct')"><i class="fas fa-file-signature"></i><span>العقد</span><img id="img-ct"></div>
         </div>
-        
-        <div style="margin-top: 15px;">
-            <button class="btn btn-primary" onclick="processSaveClient()" style="width: 100%;"><i class="fas fa-check"></i> حفظ الزبون</button>
+        <div class="grid-2">
+            <button class="btn btn-secondary" id="btn-gps" onclick="startFastLocationTracking()"><i class="fas fa-map-marker-alt"></i> تثبيت الموقع</button>
+            <button class="btn btn-primary" onclick="processSaveClient()"><i class="fas fa-check"></i> حفظ الزبون</button>
         </div>
     </div>
     <div class="floating-back-btn" onclick="closeModal('addClientModal')"><i class="fas fa-arrow-right"></i></div>
@@ -631,14 +610,13 @@
         <div class="form-group"><label class="form-label">العنوان / ملاحظات</label><textarea id="edit-notes" class="form-input" rows="2" style="resize:none;" placeholder="اكتب العنوان بالتفصيل أو أي ملاحظة..."></textarea></div>
         <div class="form-group"><label class="form-label"><i class="fas fa-link"></i> رابط الموقع الخارجي (اختياري)</label><input type="url" id="edit-loc-link" class="form-input" placeholder="انسخ رابط جوجل ماب هنا..."></div>
 
-        <div class="media-grid">
-            <div class="media-box" id="edit-loc-box" onclick="startEditLocationTracking()"><i class="fas fa-map-marker-alt" style="font-size:20px;"></i><span style="margin-top:4px;">تحديث الموقع</span></div>
-            <div class="media-box" onclick="captureEditImage('hm')"><i class="fas fa-home" style="font-size:20px;"></i><span style="margin-top:4px;">المنزل</span><img id="edit-img-hm"></div>
-            <div class="media-box" onclick="captureEditImage('ct')"><i class="fas fa-file-signature" style="font-size:20px;"></i><span style="margin-top:4px;">العقد</span><img id="edit-img-ct"></div>
+        <div class="media-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="media-box" onclick="captureEditImage('hm')"><i class="fas fa-home"></i><span>المنزل</span><img id="edit-img-hm"></div>
+            <div class="media-box" onclick="captureEditImage('ct')"><i class="fas fa-file-signature"></i><span>العقد</span><img id="edit-img-ct"></div>
         </div>
-        
-        <div style="margin-top: 15px;">
-            <button class="btn btn-primary" style="background:var(--info); color:#fff; border:none; width: 100%;" onclick="processSaveEditClient()"><i class="fas fa-save"></i> حفظ التعديلات</button>
+        <div class="grid-2">
+            <button class="btn btn-secondary" id="btn-edit-gps" onclick="startEditLocationTracking()"><i class="fas fa-map-marker-alt"></i> تحديث الموقع</button>
+            <button class="btn btn-primary" style="background:var(--info); color:#fff; border:none;" onclick="processSaveEditClient()"><i class="fas fa-save"></i> حفظ التعديلات</button>
         </div>
     </div>
     <div class="floating-back-btn" onclick="closeModal('editClientModal')"><i class="fas fa-arrow-right"></i></div>
@@ -682,9 +660,9 @@
     var AppDB; 
     var ClientsData = [];
     var newClientMonths = [];
-    var newClientMedia = { hm: null, ct: null, loc: null }; // تم إزالة id
-    
-    var editClientMedia = { hm: null, ct: null, loc: null }; // تم إزالة id
+    // تم إزالة id من المتغيرات
+    var newClientMedia = { hm: null, ct: null, loc: null };
+    var editClientMedia = { hm: null, ct: null, loc: null };
     var editClientMonths = [];
     var currentEditClient = null;
     var currentMonthStatsType = '';
@@ -782,15 +760,14 @@
         openModal('customSelectModal');
     };
 
-    // دالة وضع الذكر العشوائي (نصوص بالتشكيل)
+    // دالة وضع الذكر العشوائي
     function setRandomDhikr() {
         const dhikrList = [
-            "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
-            "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ العَظِيمِ",
-            "أَسْتَغْفِرُ اللَّهَ العَظِيمَ وَأَتُوبُ إِلَيْهِ",
-            "لَا إِلَهَ إِلَّا اللَّهُ مُحَمَّدٌ رَسُولُ اللَّهِ",
-            "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
-            "اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ"
+            "ألا بذكر الله تطمئن القلوب",
+            "سبحان الله وبحمده، سبحان الله العظيم",
+            "استغفر الله العظيم وأتوب إليه",
+            "لا إله إلا الله محمد رسول الله",
+            "لا حول ولا قوة إلا بالله"
         ];
         const randomDhikr = dhikrList[Math.floor(Math.random() * dhikrList.length)];
         const dhikrEl = document.getElementById('dynamic-dhikr');
@@ -1157,27 +1134,31 @@
         input.click();
     }
 
-    // دالة التقاط الموقع الجديدة التي تعمل داخل مربع الميديا
     function startFastLocationTracking() {
         if (!navigator.geolocation) return window.showCustomConfirm("تنبيه", "جهازك لا يدعم تحديد الموقع", "danger", null, true);
         
-        var box = document.getElementById('add-loc-box');
-        var originalHtml = box.innerHTML;
-        box.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:20px;"></i><span style="margin-top:4px;">جاري...</span>';
-        box.style.pointerEvents = 'none';
+        var btn = document.getElementById('btn-gps');
+        var originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i> جاري تحديد الموقع...';
+        btn.disabled = true;
 
-        const options = { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 };
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 0
+        };
 
         navigator.geolocation.getCurrentPosition(function(pos) {
             newClientMedia.loc = 'https://www.google.com/maps?q=' + pos.coords.latitude + ',' + pos.coords.longitude;
             document.getElementById('add-loc-link').value = newClientMedia.loc;
-            box.innerHTML = '<i class="fas fa-check-circle" style="font-size:20px; color:var(--success);"></i><span style="margin-top:4px; color:var(--success);">تم الحفظ</span>';
-            box.style.borderColor = "var(--success)";
-            box.style.pointerEvents = 'auto';
+            btn.style.background = "var(--success)";
+            btn.style.color = "#000";
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> تم التقاط الموقع بدقة';
+            btn.disabled = false;
             triggerToast('تم التقاط الموقع بدقة عالية بنجاح');
         }, function(err) {
-            box.innerHTML = originalHtml;
-            box.style.pointerEvents = 'auto';
+            btn.innerHTML = originalText;
+            btn.disabled = false;
             triggerToast("فشل التحديد، تأكد من تشغيل الـ GPS", "error");
         }, options);
     }
@@ -1215,7 +1196,6 @@
         if(document.getElementById('monthStatsModal').style.display === 'flex') showMonthStats(currentMonthStatsType);
         closeModal('addClientModal');
 
-        // Reset
         document.getElementById('add-name').value = '';
         document.getElementById('add-area').value = '';
         document.getElementById('add-product').value = '';
@@ -1229,12 +1209,8 @@
         document.querySelectorAll('#add-months-grid .month-chip').forEach(function(c){ c.classList.remove('selected'); });
         document.getElementById('expected-installment').innerText = '0 ج';
         newClientMedia = { hm: null, ct: null, loc: null };
-        
-        // Reset Media boxes
+        // إزالة id
         ['hm','ct'].forEach(function(k) { document.getElementById('img-' + k).style.display='none'; document.getElementById('img-' + k).parentElement.classList.remove('has-img'); });
-        var locBox = document.getElementById('add-loc-box');
-        locBox.innerHTML = '<i class="fas fa-map-marker-alt" style="font-size:20px;"></i><span style="margin-top:4px;">حفظ الموقع</span>';
-        locBox.style.borderColor = "var(--border)";
 
         var tx = AppDB.transaction("clients_store", "readwrite"); 
         tx.objectStore("clients_store").add(client);
@@ -1264,28 +1240,21 @@
 
         var hHtml = c.historyLog.slice().reverse().map(function(h) { return '<div class="history-item"><div><div class="h-desc" style="font-size:13px;">' + h.action + '</div><div class="h-date" style="font-size:10px;">' + h.timestamp + '</div></div><div class="h-amt" style="font-size:14px;">' + (h.val>0?'+'+h.val:h.val) + ' ج</div></div>'; }).join('') || '<div style="text-align:center; padding:15px; color:#555; font-size:13px;">لا يوجد سجل مالي</div>';
 
-        // تعديل الهيدر لإعطاء مساحة عملاقة للاسم وإزالة زر الموقع من هنا
-        var headerHtml = '<div class="m-head" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">' +
-        '<div style="flex: 1; min-width: 0;"><h2 style="font-size: 24px; margin: 0; color: var(--gold); line-height: 1.3; word-break: break-word;">' + c.name + '</h2></div>' + 
-        '<div style="display:flex; gap:8px; flex-shrink: 0;">' + 
-        '<a href="https://wa.me/2' + c.phone + '" style="color:#25D366; background:rgba(37,211,102,0.1); width:48px; height:48px; display:flex; align-items:center; justify-content:center; font-size:26px; border-radius:12px; text-decoration:none; box-shadow: 0 4px 10px rgba(37,211,102,0.2);"><i class="fab fa-whatsapp"></i></a>' + 
-        '<a href="tel:' + c.phone + '" style="color:var(--info); background:rgba(10,132,255,0.1); width:48px; height:48px; display:flex; align-items:center; justify-content:center; font-size:22px; border-radius:12px; text-decoration:none; box-shadow: 0 4px 10px rgba(10,132,255,0.2);"><i class="fas fa-phone-alt"></i></a>' + 
-        '<div class="close-btn" onclick="closeModal(\'viewClientModal\')" style="width:48px; height:48px; font-size:18px; border-radius:12px; background:var(--surface); border:1px solid var(--border);"><i class="fas fa-times"></i></div>' +
-        '</div></div>';
+        // توسيع الاسم وحذف أيقونة الموقع من الأعلى
+        var headerHtml = '<div class="m-head" style="margin-bottom: 15px;"><div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap: 10px;"><h2 style="font-size:24px; margin:0; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--gold);">' + c.name + '</h2><div style="display:flex; gap:12px;"><a href="tel:' + c.phone + '" style="color:var(--info); background:rgba(10,132,255,0.1); width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-size:28px; border-radius:18px; text-decoration:none; box-shadow: 0 4px 10px rgba(10,132,255,0.3);"><i class="fas fa-phone-alt"></i></a><a href="https://wa.me/2' + c.phone + '" style="color:#25D366; background:rgba(37,211,102,0.1); width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-size:32px; border-radius:18px; text-decoration:none; box-shadow: 0 4px 10px rgba(37,211,102,0.3);"><i class="fab fa-whatsapp"></i></a></div></div><div class="close-btn" onclick="closeModal(\'viewClientModal\')" style="width:40px; height:40px; font-size:18px; margin-right:10px;"><i class="fas fa-times"></i></div></div>';
         
         var innerDash = '<div style="background: linear-gradient(145deg, var(--surface), #050505); border: 1px solid var(--gold); border-radius: 16px; padding: 15px; margin-bottom: 15px; font-size: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);"><div style="color:var(--text-muted);">📦 <span style="color:#fff; font-weight:bold;">' + cProduct + '</span></div><div style="color:var(--text-muted);">📍 <span style="color:#fff; font-weight:bold;">' + c.area + '</span></div><div style="grid-column: span 2; color:var(--text-muted); line-height:1.5;">📝 <span style="color:#fff;">' + cNotes + '</span></div><div style="color:var(--gold); font-weight:900; font-size:16px;">💰 إجمالي: ' + c.totalAmount.toLocaleString() + ' ج</div><div style="color:var(--info); font-weight:900; font-size:16px;">💸 قسط: ' + c.monthlyInstallment.toLocaleString() + ' ج</div><div style="color:var(--success); font-weight:bold;">✅ دُفع: ' + pdCount + ' شهر</div><div style="color:var(--danger); font-weight:bold;">⚠️ باقي: ' + remCount + ' (' + rem.toLocaleString() + ' ج)</div></div>';
 
-        // تعديل شبكة الميديا لعرض الموقع بداخلها بدلاً من البطاقة
-        var hasLoc = (c.media.loc && c.media.loc !== 'null' && c.media.loc !== '');
-        var mediaHtml = '<div class="media-grid" style="gap:10px; margin: 15px 0;">' +
-        '<div class="media-box" onclick="openMapLink(\'' + c.media.loc + '\')" style="height:70px; border-color:' + (hasLoc ? 'var(--success)' : '#333') + ';"><i class="fas fa-map-marker-alt" style="font-size:24px; color:' + (hasLoc ? 'var(--success)' : 'var(--text-muted)') + ';"></i><span style="font-size:10px; margin-top:5px; color:' + (hasLoc ? 'var(--success)' : 'var(--text-muted)') + ';">' + (hasLoc ? 'عرض الموقع' : 'لا يوجد موقع') + '</span></div>' +
-        '<div class="media-box ' + (c.media.hm?'has-img':'') + '" onclick="viewMedia(\'' + c.media.hm + '\')" style="height:70px;">' + (c.media.hm?'<img src="' + c.media.hm + '" style="display:block">':'<i class="fas fa-home" style="font-size:24px; color:var(--text-muted);"></i><span style="font-size:10px; margin-top:5px; color:var(--text-muted);">المنزل</span>') + '</div>' +
-        '<div class="media-box ' + (c.media.ct?'has-img':'') + '" onclick="viewMedia(\'' + c.media.ct + '\')" style="height:70px;">' + (c.media.ct?'<img src="' + c.media.ct + '" style="display:block">':'<i class="fas fa-file-signature" style="font-size:24px; color:var(--text-muted);"></i><span style="font-size:10px; margin-top:5px; color:var(--text-muted);">العقد</span>') + '</div></div>';
-
+        // إضافة زر الموقع الأحمر الكبير مكان البطاقة الشخصية
         document.getElementById('view-dynamic-content').innerHTML = headerHtml + 
         '<div style="flex:1; overflow-y:auto; padding-bottom:10px; padding-right:5px;">' + innerDash + 
         '<div style="margin-bottom:15px;"><label class="form-label" style="font-size:14px; margin-bottom:8px;">خطة التقسيط (اضغط للإجراء)</label><div class="months-grid" style="gap:8px;">' + mHtml + '</div></div>' + 
-        mediaHtml + 
+        '<div class="media-grid" style="gap:10px; margin: 15px 0;">' +
+        '<div class="media-box" onclick="openMapLink(\'' + c.media.loc + '\')" style="height:70px; background:rgba(255,59,48,0.1); border: 2px solid var(--danger); cursor:pointer;"><i class="fas fa-map-marker-alt" style="font-size:26px; color:var(--danger); margin-bottom:5px;"></i><span style="color:var(--danger); font-weight:bold; font-size:11px;">الموقع</span></div>' +
+        '<div class="media-box ' + (c.media.hm?'has-img':'') + '" onclick="viewMedia(\'' + c.media.hm + '\')" style="height:70px;">' + (c.media.hm?'<img src="' + c.media.hm + '" style="display:block">':'<i class="fas fa-home" style="font-size:24px;"></i><span style="font-size:11px;">المنزل</span>') + '</div>' +
+        '<div class="media-box ' + (c.media.ct?'has-img':'') + '" onclick="viewMedia(\'' + c.media.ct + '\')" style="height:70px;">' + (c.media.ct?'<img src="' + c.media.ct + '" style="display:block">':'<i class="fas fa-file-signature" style="font-size:24px;"></i><span style="font-size:11px;">العقد</span>') + '</div>' +
+        '</div>' + 
+        
         '<div class="history-section" style="margin:20px auto; padding:15px; border-radius:20px; width: 100%; max-width: 280px; aspect-ratio: 1 / 1; overflow-y: auto; background:var(--surface); border:1px solid var(--border); box-shadow:0 10px 25px rgba(0,0,0,0.5);"><div class="history-title" style="font-size:16px; margin-bottom:15px; text-align:center;">السجل المالي</div>' + hHtml + '</div>' + 
         '</div>' + 
         '<div class="grid-2" style="margin-top:15px; gap:10px;"><button class="btn btn-primary" style="background:var(--info); color:#fff; border:none; padding:15px; font-size:16px;" onclick="openEditModal(\'' + c.uuid + '\')"><i class="fas fa-edit"></i> تعديل</button><button class="btn" style="background:rgba(255,59,48,0.1); color:var(--danger); padding:15px; font-size:16px;" onclick="execDelete(\'' + c.uuid + '\')"><i class="fas fa-trash-alt"></i> مسح</button></div>';
@@ -1396,7 +1365,7 @@
         } 
     };
     
-    window.openMapLink = function(l) { if(l && l !== 'null' && l !== '') window.open(l); else triggerToast("لا يوجد موقع محفوظ","error"); };
+    window.openMapLink = function(l) { if(l && l !== 'null') window.open(l); };
     
     // =========================================
     // دوال تعديل بيانات الزبائن
@@ -1427,7 +1396,7 @@
         editClientMedia = Object.assign({}, currentEditClient.media);
         editClientMonths = currentEditClient.planMonths.slice();
 
-        // تحديث المربعات
+        // إزالة id
         ['hm','ct'].forEach(function(k) {
             var imgEl = document.getElementById('edit-img-' + k);
             if(editClientMedia[k] && editClientMedia[k] !== 'null') {
@@ -1436,15 +1405,6 @@
                 imgEl.style.display = "none"; imgEl.parentElement.classList.remove('has-img');
             }
         });
-
-        var locBox = document.getElementById('edit-loc-box');
-        if(editClientMedia.loc && editClientMedia.loc !== 'null' && editClientMedia.loc !== '') {
-            locBox.innerHTML = '<i class="fas fa-check-circle" style="font-size:20px; color:var(--success);"></i><span style="margin-top:4px; color:var(--success);">مسجل مسبقاً</span>';
-            locBox.style.borderColor = "var(--success)";
-        } else {
-            locBox.innerHTML = '<i class="fas fa-map-marker-alt" style="font-size:20px;"></i><span style="margin-top:4px;">تحديث الموقع</span>';
-            locBox.style.borderColor = "var(--border)";
-        }
 
         document.querySelectorAll('#edit-months-grid .month-chip').forEach(function(el) { 
             el.classList.remove('selected', 'paid'); 
@@ -1516,24 +1476,19 @@
 
     window.startEditLocationTracking = function() {
         if (!navigator.geolocation) return window.showCustomConfirm("تنبيه", "جهازك لا يدعم تحديد الموقع", "danger", null, true);
-        
-        var box = document.getElementById('edit-loc-box');
-        var originalHtml = box.innerHTML;
-        box.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:20px;"></i><span style="margin-top:4px;">جاري...</span>';
-        box.style.pointerEvents = 'none';
+        var btn = document.getElementById('btn-edit-gps');
+        var originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i>'; btn.disabled = true;
         
         const options = { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 };
         
         navigator.geolocation.getCurrentPosition(function(pos) {
             editClientMedia.loc = 'https://www.google.com/maps?q=' + pos.coords.latitude + ',' + pos.coords.longitude;
             document.getElementById('edit-loc-link').value = editClientMedia.loc;
-            box.innerHTML = '<i class="fas fa-check-circle" style="font-size:20px; color:var(--success);"></i><span style="margin-top:4px; color:var(--success);">تم التحديث</span>';
-            box.style.borderColor = "var(--success)";
-            box.style.pointerEvents = 'auto';
+            btn.style.background = "var(--info)"; btn.style.color = "#fff"; btn.innerHTML = '<i class="fas fa-check-circle"></i>'; btn.disabled = false;
             triggerToast('تم تحديث الموقع بدقة عالية بنجاح');
         }, function(err) {
-            box.innerHTML = originalHtml;
-            box.style.pointerEvents = 'auto';
+            btn.innerHTML = originalText; btn.disabled = false;
             triggerToast("فشل التحديث، تأكد من الـ GPS", "error");
         }, options);
     };
@@ -1698,14 +1653,16 @@
         });
     };
 
+    // تعديل زر الخروج لمسح إذن الدخول بالكامل وعرض رسالة احترافية
     window.logoutGoogle = function() {
-        window.showCustomConfirm("تسجيل الخروج", "هل أنت متأكد أنك تريد تسجيل الخروج من حساب جوجل؟", "warning", function() {
+        window.showCustomConfirm("تسجيل الخروج", "هل أنت متأكد أنك تريد إنهاء الجلسة وتسجيل الخروج من النظام بالكامل؟", "warning", function() {
             var btn = document.querySelector('.fa-sign-out-alt').parentElement;
             var originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             
             signOut(auth).then(() => {
                 localStorage.removeItem("amer_cloud_email");
+                localStorage.removeItem("amer_v17_auth"); // إضافة مهمة لإنهاء جلسة الـ PIN
                 window.location.reload();
             }).catch((error) => {
                 btn.innerHTML = originalText;
@@ -1729,4 +1686,202 @@
             let updatedClients = [];
 
             const cloudName = 'dzqppbirp'; 
-            const uploadPreset = 'amer_app';
+            const uploadPreset = 'amer_app'; 
+            const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+            for (let i = 0; i < window.ClientsData.length; i++) {
+                let client = window.ClientsData[i];
+                let media = client.media;
+                // إزالة id
+                let keys = ['hm', 'ct'];
+
+                for (let k of keys) {
+                    if (media[k] && media[k].startsWith('data:image')) {
+                        let formData = new FormData();
+                        formData.append('file', media[k]);
+                        formData.append('upload_preset', uploadPreset);
+
+                        let response = await fetch(cloudinaryUrl, { method: 'POST', body: formData });
+                        let data = await response.json();
+                        
+                        if (data.secure_url) {
+                            media[k] = data.secure_url; 
+                        } else {
+                            throw new Error("فشل الرفع لـ Cloudinary: " + (data.error ? data.error.message : "حدث خطأ غير معروف"));
+                        }
+                    }
+                }
+                updatedClients.push(client);
+                window.AppDB.transaction("clients_store","readwrite").objectStore("clients_store").put(client);
+            }
+
+            const dataStr = JSON.stringify(updatedClients);
+            const compressedData = LZString.compressToUTF16(dataStr);
+
+            await setDoc(doc(db, "users_data", user.uid), {
+                email: user.email,
+                appData: compressedData,
+                isCompressed: true,
+                lastSaved: new Date().toISOString()
+            });
+
+            if(!silent) {
+                setTimeout(() => t.classList.remove('show'), 1000);
+                setTimeout(() => {
+                    document.getElementById('toast-msg').innerText = "تم النسخ الاحتياطي التلقائي بنجاح!";
+                    t.style.background = "var(--success)";
+                    t.classList.add('show');
+                    setTimeout(() => t.classList.remove('show'), 3000);
+                }, 1200);
+            }
+
+        } catch (e) {
+            console.error(e);
+            if(!silent) {
+                var t = document.getElementById('toast');
+                t.classList.remove('show');
+                window.showCustomConfirm("خطأ سحابي", "حدث خطأ أثناء الرفع السحابي:\n" + e.message, "danger", null, true);
+            }
+        }
+    };
+
+    window.loadMyDataFromCloud = async function(isAutoLoad = false) {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        try {
+            var t = document.getElementById('toast');
+            if(!isAutoLoad) {
+                t.style.background = "var(--info)";
+                document.getElementById('toast-msg').innerText = "جاري التحقق من النسخة السحابية...";
+                t.classList.add('show');
+            }
+
+            const docSnap = await getDoc(doc(db, "users_data", user.uid));
+            if (docSnap.exists() && docSnap.data().appData) {
+                
+                let cloudData = docSnap.data();
+                let finalData = cloudData.appData;
+
+                if (cloudData.isCompressed) {
+                    finalData = LZString.decompressFromUTF16(cloudData.appData);
+                }
+
+                const parsedData = JSON.parse(finalData);
+
+                if(Array.isArray(parsedData)) {
+                    const countReq = window.AppDB.transaction("clients_store", "readonly").objectStore("clients_store").count();
+                    countReq.onsuccess = function() {
+                        if (isAutoLoad && countReq.result > 0) {
+                            if(!isAutoLoad) t.classList.remove('show');
+                            window.saveMyDataToCloud(true);
+                            return;
+                        }
+
+                        const tx = window.AppDB.transaction("clients_store", "readwrite");
+                        const store = tx.objectStore("clients_store");
+                        store.clear();
+                        parsedData.forEach(client => store.add(client));
+                        tx.oncomplete = function() { 
+                            window.ClientsData = parsedData; 
+                            window.updateAreasData();
+                            if(typeof window.processFilters === 'function') window.processFilters(); 
+                            
+                            if(!isAutoLoad) {
+                                setTimeout(() => t.classList.remove('show'), 1000);
+                                setTimeout(() => {
+                                    t.style.background = "var(--success)";
+                                    document.getElementById('toast-msg').innerText = "تم استرجاع بياناتك بنجاح!";
+                                    t.classList.add('show');
+                                    setTimeout(() => t.classList.remove('show'), 3000);
+                                    if(document.getElementById('allClientsPage') && document.getElementById('allClientsPage').style.display === 'flex') window.processAllFilters();
+                                }, 1200);
+                            }
+                        };
+                    };
+                }
+            } else {
+                if(!isAutoLoad) {
+                    setTimeout(() => t.classList.remove('show'), 1000);
+                    setTimeout(() => {
+                        t.style.background = "var(--danger)";
+                        document.getElementById('toast-msg').innerText = "لا توجد نسخة محفوظة في هذا الحساب";
+                        t.classList.add('show');
+                        setTimeout(() => t.classList.remove('show'), 3000);
+                    }, 1200);
+                }
+            }
+        } catch (e) {
+            console.error(e);
+            if(!isAutoLoad) window.showCustomConfirm("خطأ استرجاع", "خطأ في الاسترجاع: " + e.message, "danger", null, true);
+        }
+    };
+
+    // =========================================
+    // دوال لوحة المدير
+    // =========================================
+    window.loadAdminData = async function() {
+        var list = document.getElementById('admin-backups-list');
+        list.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="color:var(--gold); font-size:24px;"></i></div>';
+        
+        try {
+            const querySnapshot = await getDocs(collection(db, "users_data"));
+            list.innerHTML = '';
+            
+            if (querySnapshot.empty) {
+                list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 30px; font-weight: bold;">لا توجد نسخ احتياطية مسجلة بعد.</div>';
+                return;
+            }
+
+            querySnapshot.forEach((docSnap) => {
+                var data = docSnap.data();
+                var email = data.email || "غير معروف (نسخة قديمة)";
+                var date = data.lastSaved ? new Date(data.lastSaved).toLocaleString('ar-EG') : "تاريخ غير متوفر";
+                var docId = docSnap.id;
+                
+                list.innerHTML += `
+                    <div class="admin-item fade-in" id="admin-doc-${docId}">
+                        <div class="admin-item-info">
+                            <p><i class="fas fa-envelope" style="color:var(--gold); margin-left: 5px;"></i> ${email}</p>
+                            <span><i class="fas fa-clock" style="margin-left: 3px;"></i> ${date}</span>
+                        </div>
+                        <button class="btn" style="width: auto; padding: 10px 18px; background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger); font-size: 14px; border-radius: 12px; transition: 0.2s;" onclick="window.deleteUserBackup('${docId}', '${email}')">
+                            <i class="fas fa-trash-alt"></i> مسح
+                        </button>
+                    </div>
+                `;
+            });
+        } catch (e) {
+            list.innerHTML = `<div style="text-align:center; color:var(--danger); padding:20px; border: 1px solid var(--danger); border-radius: 15px;">حدث خطأ أثناء الجلب. تأكد من إعدادات الحماية (Rules).<br><br><span style="font-size:11px;">${e.message}</span></div>`;
+        }
+    };
+
+    window.deleteUserBackup = async function(docId, email) {
+        window.showCustomConfirm("تحذير أمني خطير", "هل أنت متأكد من مسح النسخة الاحتياطية الخاصة بـ:\n" + email + "\nهذا الإجراء سيقوم بحذف بياناته نهائياً ولا يمكن التراجع عنه!", "danger", async function() {
+            try {
+                var btn = document.querySelector(`#admin-doc-${docId} button`);
+                var originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                await deleteDoc(doc(db, "users_data", docId));
+                document.getElementById(`admin-doc-${docId}`).style.display = 'none';
+                
+                var t = document.getElementById('toast');
+                t.style.background = "var(--success)";
+                document.getElementById('toast-msg').innerText = "تم مسح النسخة بنجاح!";
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 3000);
+            } catch (e) {
+                window.showCustomConfirm("خطأ مسح", "خطأ أثناء المسح: " + e.message, "danger", null, true);
+                if (btn) {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
+            }
+        });
+    };
+</script>
+
+</body>
+</html>
