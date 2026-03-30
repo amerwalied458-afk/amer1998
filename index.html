@@ -2289,20 +2289,33 @@
     };
 
     window.logoutGoogle = function() {
-        window.showCustomConfirm("تسجيل الخروج", "هل أنت متأكد أنك تريد إنهاء الجلسة وتسجيل الخروج من النظام بالكامل؟", "warning", function() {
+        window.showCustomConfirm("تسجيل الخروج", "هل أنت متأكد أنك تريد إنهاء الجلسة وتسجيل الخروج من النظام بالكامل؟ سيتم مسح البيانات المؤقتة لضمان الخصوصية.", "warning", function() {
             var icon = document.querySelector('.fa-sign-out-alt');
             var btn = icon ? icon.parentElement : null; 
             var originalText = btn ? btn.innerHTML : ''; 
             if(btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             
-            signOut(auth).then(() => { 
-                localStorage.removeItem("amer_cloud_email"); 
-                localStorage.removeItem("amer_v17_auth"); 
-                window.location.reload(); 
-            }).catch((error) => { 
-                if(btn) btn.innerHTML = originalText; 
-                window.showCustomConfirm("خطأ", "حدث خطأ: " + error.message, "danger", null, true); 
-            });
+            function executeSignOut() {
+                signOut(auth).then(() => { 
+                    localStorage.removeItem("amer_cloud_email"); 
+                    localStorage.removeItem("amer_v17_auth"); 
+                    window.ClientsData = []; 
+                    window.location.reload(); 
+                }).catch((error) => { 
+                    if(btn) btn.innerHTML = originalText; 
+                    window.showCustomConfirm("خطأ", "حدث خطأ: " + error.message, "danger", null, true); 
+                });
+            }
+
+            if (window.AppDB) {
+                var tx = window.AppDB.transaction("clients_store", "readwrite");
+                var store = tx.objectStore("clients_store");
+                store.clear();
+                tx.oncomplete = function() { executeSignOut(); };
+                tx.onerror = function() { executeSignOut(); };
+            } else {
+                executeSignOut();
+            }
         });
     };
 
