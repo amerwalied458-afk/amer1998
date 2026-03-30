@@ -83,7 +83,6 @@
 
         @keyframes bagPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
-        /* اللوجو המزدوج بناءً على طلبك */
         .amer-brand { font-family: sans-serif; font-weight: 900; color: var(--gold); position: relative; text-transform: uppercase; background: linear-gradient(to right, var(--gold) 20%, #fff 40%, #fff 60%, var(--gold) 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; filter: drop-shadow(0 0 15px var(--gold-glow)); }
         .brand-sub { font-size: 25px; letter-spacing: 12px; display: block; margin-top: 10px; color: #fff; -webkit-text-fill-color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); font-weight: 700; }
 
@@ -150,9 +149,9 @@
             font-family: 'Aref Ruqaa', serif; /* خط الرقعة الجديد */
             text-align: center; 
             margin: 25px auto 30px; 
-            font-size: 32px; 
+            font-size: 34px; /* تكبير الخط قليلاً ليتناسب مع الرقعة */
             font-weight: 700; 
-            color: #ffdf73; 
+            color: #fff4a3; /* لون أصفر/ذهبي فاتح مشرق */
             padding: 30px 20px;
             background: radial-gradient(circle, #2a2000 0%, #050400 80%);
             border: 2px solid var(--gold);
@@ -164,7 +163,8 @@
             justify-content: center;
             gap: 15px;
             letter-spacing: 1px;
-            text-shadow: 0 0 20px rgba(212,175,55,0.8);
+            /* توهج ذهبي قوي وحيوي للخط */
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5);
             outline: 1px dashed rgba(212,175,55,0.5);
             outline-offset: -8px;
         }
@@ -520,7 +520,7 @@
 </div>
 
 <div id="addClientModal" class="modal-overlay">
-    <div class="modal-content slide-up">
+    <div class="modal-content slide-up" style="padding-bottom: 80px;">
         <div class="m-head"><h2>إضافة زبون جديد</h2><div class="close-btn" onclick="closeModal('addClientModal')"><i class="fas fa-times"></i></div></div>
         <div class="form-group"><label class="form-label">الاسم مثال ف1ص1</label><input type="text" id="add-name" class="form-input"></div>
         <div class="grid-2">
@@ -557,14 +557,13 @@
         <div class="form-group"><label class="form-label">العنوان / ملاحظات</label><textarea id="add-notes" class="form-input" rows="2" style="resize:none;" placeholder="اكتب العنوان بالتفصيل أو أي ملاحظة..."></textarea></div>
         <div class="form-group"><label class="form-label"><i class="fas fa-link"></i> رابط الموقع الخارجي (اختياري)</label><input type="url" id="add-loc-link" class="form-input" placeholder="انسخ رابط جوجل ماب هنا..."></div>
 
-        <div class="media-grid" style="grid-template-columns: 1fr 1fr;">
-            <div class="media-box" onclick="captureImage('hm')"><i class="fas fa-home"></i><span>المنزل</span><img id="img-hm"></div>
+        <div class="media-grid" style="grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
             <div class="media-box" onclick="captureImage('ct')"><i class="fas fa-file-signature"></i><span>العقد</span><img id="img-ct"></div>
+            <div class="media-box" onclick="captureImage('hm')"><i class="fas fa-home"></i><span>المنزل</span><img id="img-hm"></div>
+            <div class="media-box" id="btn-gps" onclick="startFastLocationTracking()"><i class="fas fa-map-marker-alt"></i><span>تثبيت الموقع</span></div>
         </div>
-        <div class="grid-2">
-            <button class="btn btn-secondary" id="btn-gps" onclick="startFastLocationTracking()"><i class="fas fa-map-marker-alt"></i> تثبيت الموقع</button>
-            <button class="btn btn-primary" onclick="processSaveClient()"><i class="fas fa-check"></i> حفظ الزبون</button>
-        </div>
+        
+        <button class="btn btn-primary" style="width: 100%; background: var(--gold); color: #000; font-weight: 900; font-size: 16px; padding: 15px; border-radius: 15px;" onclick="processSaveClient()"><i class="fas fa-check"></i> حفظ الزبون</button>
     </div>
     <div class="floating-back-btn" onclick="closeModal('addClientModal')"><i class="fas fa-arrow-right"></i></div>
 </div>
@@ -575,7 +574,7 @@
 </div>
 
 <div id="editClientModal" class="modal-overlay">
-    <div class="modal-content slide-up">
+    <div class="modal-content slide-up" style="padding-bottom: 80px;">
         <div class="m-head"><h2>تعديل بيانات الزبون</h2><div class="close-btn" onclick="closeModal('editClientModal')"><i class="fas fa-times"></i></div></div>
         <input type="hidden" id="edit-uuid">
         <div class="form-group"><label class="form-label">الاسم مثال ف1ص1</label><input type="text" id="edit-name" class="form-input"></div>
@@ -610,14 +609,13 @@
         <div class="form-group"><label class="form-label">العنوان / ملاحظات</label><textarea id="edit-notes" class="form-input" rows="2" style="resize:none;" placeholder="اكتب العنوان بالتفصيل أو أي ملاحظة..."></textarea></div>
         <div class="form-group"><label class="form-label"><i class="fas fa-link"></i> رابط الموقع الخارجي (اختياري)</label><input type="url" id="edit-loc-link" class="form-input" placeholder="انسخ رابط جوجل ماب هنا..."></div>
 
-        <div class="media-grid" style="grid-template-columns: 1fr 1fr;">
-            <div class="media-box" onclick="captureEditImage('hm')"><i class="fas fa-home"></i><span>المنزل</span><img id="edit-img-hm"></div>
+        <div class="media-grid" style="grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
             <div class="media-box" onclick="captureEditImage('ct')"><i class="fas fa-file-signature"></i><span>العقد</span><img id="edit-img-ct"></div>
+            <div class="media-box" onclick="captureEditImage('hm')"><i class="fas fa-home"></i><span>المنزل</span><img id="edit-img-hm"></div>
+            <div class="media-box" id="btn-edit-gps" onclick="startEditLocationTracking()"><i class="fas fa-map-marker-alt"></i><span>تحديث الموقع</span></div>
         </div>
-        <div class="grid-2">
-            <button class="btn btn-secondary" id="btn-edit-gps" onclick="startEditLocationTracking()"><i class="fas fa-map-marker-alt"></i> تحديث الموقع</button>
-            <button class="btn btn-primary" style="background:var(--info); color:#fff; border:none;" onclick="processSaveEditClient()"><i class="fas fa-save"></i> حفظ التعديلات</button>
-        </div>
+
+        <button class="btn btn-primary" style="width: 100%; background: var(--info); color: #fff; font-weight: 900; font-size: 16px; padding: 15px; border-radius: 15px; border: none;" onclick="processSaveEditClient()"><i class="fas fa-save"></i> حفظ التعديلات</button>
     </div>
     <div class="floating-back-btn" onclick="closeModal('editClientModal')"><i class="fas fa-arrow-right"></i></div>
 </div>
@@ -660,7 +658,6 @@
     var AppDB; 
     var ClientsData = [];
     var newClientMonths = [];
-    // تم إزالة id من المتغيرات
     var newClientMedia = { hm: null, ct: null, loc: null };
     var editClientMedia = { hm: null, ct: null, loc: null };
     var editClientMonths = [];
@@ -1134,13 +1131,14 @@
         input.click();
     }
 
-    function startFastLocationTracking() {
+    // تعديل برمجة الزر ليتوافق مع المربع وتحديث الأيقونة
+    window.startFastLocationTracking = function() {
         if (!navigator.geolocation) return window.showCustomConfirm("تنبيه", "جهازك لا يدعم تحديد الموقع", "danger", null, true);
         
         var btn = document.getElementById('btn-gps');
-        var originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i> جاري تحديد الموقع...';
-        btn.disabled = true;
+        var originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin" style="font-size:18px; color:var(--gold); margin-bottom:3px;"></i><span style="font-size:9px; color:var(--text-muted);">جاري...</span>';
+        btn.style.pointerEvents = 'none';
 
         const options = {
             enableHighAccuracy: true,
@@ -1151,17 +1149,16 @@
         navigator.geolocation.getCurrentPosition(function(pos) {
             newClientMedia.loc = 'https://www.google.com/maps?q=' + pos.coords.latitude + ',' + pos.coords.longitude;
             document.getElementById('add-loc-link').value = newClientMedia.loc;
-            btn.style.background = "var(--success)";
-            btn.style.color = "#000";
-            btn.innerHTML = '<i class="fas fa-check-circle"></i> تم التقاط الموقع بدقة';
-            btn.disabled = false;
+            btn.style.borderColor = "var(--success)";
+            btn.innerHTML = '<i class="fas fa-check-circle" style="font-size:18px; color:var(--success); margin-bottom:3px;"></i><span style="font-size:9px; color:var(--success);">تم التثبيت</span>';
+            btn.style.pointerEvents = 'auto';
             triggerToast('تم التقاط الموقع بدقة عالية بنجاح');
         }, function(err) {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            btn.style.pointerEvents = 'auto';
             triggerToast("فشل التحديد، تأكد من تشغيل الـ GPS", "error");
         }, options);
-    }
+    };
 
     function processSaveClient() {
         var name=document.getElementById('add-name').value, tot=parseFloat(document.getElementById('add-total').value);
@@ -1208,9 +1205,14 @@
         newClientMonths = [];
         document.querySelectorAll('#add-months-grid .month-chip').forEach(function(c){ c.classList.remove('selected'); });
         document.getElementById('expected-installment').innerText = '0 ج';
+        
         newClientMedia = { hm: null, ct: null, loc: null };
-        // إزالة id
         ['hm','ct'].forEach(function(k) { document.getElementById('img-' + k).style.display='none'; document.getElementById('img-' + k).parentElement.classList.remove('has-img'); });
+        
+        // إعادة تهيئة مربع الموقع
+        var gpsBtn = document.getElementById('btn-gps');
+        gpsBtn.innerHTML = '<i class="fas fa-map-marker-alt"></i><span>تثبيت الموقع</span>';
+        gpsBtn.style.borderColor = "";
 
         var tx = AppDB.transaction("clients_store", "readwrite"); 
         tx.objectStore("clients_store").add(client);
@@ -1221,7 +1223,7 @@
     }
 
     // =========================================
-    // دالة عرض الزبون التفصيلية والتعديل الجديد عليها
+    // دالة عرض الزبون التفصيلية 
     // =========================================
     window.openClientDetails = function(uuid) {
         var c = ClientsData.find(function(x){ return x.uuid === uuid; }); if(!c) return;
@@ -1245,7 +1247,6 @@
         
         var innerDash = '<div style="background: linear-gradient(145deg, var(--surface), #050505); border: 1px solid var(--gold); border-radius: 16px; padding: 15px; margin-bottom: 15px; font-size: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);"><div style="color:var(--text-muted);">📦 <span style="color:#fff; font-weight:bold;">' + cProduct + '</span></div><div style="color:var(--text-muted);">📍 <span style="color:#fff; font-weight:bold;">' + c.area + '</span></div><div style="grid-column: span 2; color:var(--text-muted); line-height:1.5;">📝 <span style="color:#fff;">' + cNotes + '</span></div><div style="color:var(--gold); font-weight:900; font-size:16px;">💰 إجمالي: ' + c.totalAmount.toLocaleString() + ' ج</div><div style="color:var(--info); font-weight:900; font-size:16px;">💸 قسط: ' + c.monthlyInstallment.toLocaleString() + ' ج</div><div style="color:var(--success); font-weight:bold;">✅ دُفع: ' + pdCount + ' شهر</div><div style="color:var(--danger); font-weight:bold;">⚠️ باقي: ' + remCount + ' (' + rem.toLocaleString() + ' ج)</div></div>';
 
-        // إضافة زر الموقع الأحمر الكبير مكان البطاقة الشخصية
         document.getElementById('view-dynamic-content').innerHTML = headerHtml + 
         '<div style="flex:1; overflow-y:auto; padding-bottom:10px; padding-right:5px;">' + innerDash + 
         '<div style="margin-bottom:15px;"><label class="form-label" style="font-size:14px; margin-bottom:8px;">خطة التقسيط (اضغط للإجراء)</label><div class="months-grid" style="gap:8px;">' + mHtml + '</div></div>' + 
@@ -1396,7 +1397,6 @@
         editClientMedia = Object.assign({}, currentEditClient.media);
         editClientMonths = currentEditClient.planMonths.slice();
 
-        // إزالة id
         ['hm','ct'].forEach(function(k) {
             var imgEl = document.getElementById('edit-img-' + k);
             if(editClientMedia[k] && editClientMedia[k] !== 'null') {
@@ -1417,6 +1417,11 @@
                 if(currentEditClient.paidMonthsLog.indexOf(m) !== -1) cEl.classList.add('paid');
             }
         });
+        
+        // إعادة تهيئة مربع الموقع في التعديل
+        var gpsBtn = document.getElementById('btn-edit-gps');
+        gpsBtn.innerHTML = '<i class="fas fa-map-marker-alt"></i><span>تحديث الموقع</span>';
+        gpsBtn.style.borderColor = "";
 
         calculateEditInstallment();
         closeModal('viewClientModal');
@@ -1477,18 +1482,22 @@
     window.startEditLocationTracking = function() {
         if (!navigator.geolocation) return window.showCustomConfirm("تنبيه", "جهازك لا يدعم تحديد الموقع", "danger", null, true);
         var btn = document.getElementById('btn-edit-gps');
-        var originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i>'; btn.disabled = true;
+        var originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin" style="font-size:18px; color:var(--gold); margin-bottom:3px;"></i><span style="font-size:9px; color:var(--text-muted);">جاري...</span>';
+        btn.style.pointerEvents = 'none';
         
         const options = { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 };
         
         navigator.geolocation.getCurrentPosition(function(pos) {
             editClientMedia.loc = 'https://www.google.com/maps?q=' + pos.coords.latitude + ',' + pos.coords.longitude;
             document.getElementById('edit-loc-link').value = editClientMedia.loc;
-            btn.style.background = "var(--info)"; btn.style.color = "#fff"; btn.innerHTML = '<i class="fas fa-check-circle"></i>'; btn.disabled = false;
+            btn.style.borderColor = "var(--info)";
+            btn.innerHTML = '<i class="fas fa-check-circle" style="font-size:18px; color:var(--info); margin-bottom:3px;"></i><span style="font-size:9px; color:var(--info);">تم التحديث</span>';
+            btn.style.pointerEvents = 'auto';
             triggerToast('تم تحديث الموقع بدقة عالية بنجاح');
         }, function(err) {
-            btn.innerHTML = originalText; btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            btn.style.pointerEvents = 'auto';
             triggerToast("فشل التحديث، تأكد من الـ GPS", "error");
         }, options);
     };
@@ -1653,7 +1662,6 @@
         });
     };
 
-    // تعديل زر الخروج لمسح إذن الدخول بالكامل وعرض رسالة احترافية
     window.logoutGoogle = function() {
         window.showCustomConfirm("تسجيل الخروج", "هل أنت متأكد أنك تريد إنهاء الجلسة وتسجيل الخروج من النظام بالكامل؟", "warning", function() {
             var btn = document.querySelector('.fa-sign-out-alt').parentElement;
@@ -1662,7 +1670,7 @@
             
             signOut(auth).then(() => {
                 localStorage.removeItem("amer_cloud_email");
-                localStorage.removeItem("amer_v17_auth"); // إضافة مهمة لإنهاء جلسة الـ PIN
+                localStorage.removeItem("amer_v17_auth");
                 window.location.reload();
             }).catch((error) => {
                 btn.innerHTML = originalText;
@@ -1692,7 +1700,6 @@
             for (let i = 0; i < window.ClientsData.length; i++) {
                 let client = window.ClientsData[i];
                 let media = client.media;
-                // إزالة id
                 let keys = ['hm', 'ct'];
 
                 for (let k of keys) {
