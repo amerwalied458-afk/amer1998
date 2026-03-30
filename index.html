@@ -394,43 +394,53 @@
         .dash-card b { font-size: 15px; display: block; margin-top: 2px; font-weight: 900; }
 
         /* =========================================
-           تصميم الأذكار والبرواز المزخرف (الرقعة الاحترافي)
+           تصميم الأذكار والبرواز الإسلامي الاحترافي
            ========================================= */
         .spiritual-phrase { 
             font-family: 'Aref Ruqaa', serif; 
             text-align: center; 
             margin: 20px 15px 25px; 
-            font-size: 32px; 
-            color: #ffeaa7; 
-            padding: 20px 15px; 
-            background: linear-gradient(135deg, #1c1600 0%, #000 100%); 
-            border: 1px solid var(--gold); 
-            border-radius: 15px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.2); 
+            /* حجم خط متجاوب للحفاظ عليه في شطر واحد دائماً */
+            font-size: clamp(16px, 5.5vw, 28px); 
+            white-space: nowrap; 
+            overflow: hidden;
+            color: #fce8aa; /* ذهبي عثماني فاتح */
+            padding: 18px 45px; /* مساحة للزخارف الجانبية */
+            background: radial-gradient(circle at center, #0f2b16 0%, #061208 100%); /* أخضر إسلامي ملكي */
+            border: 2px solid var(--gold); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8), inset 0 0 20px rgba(212,175,55,0.2); 
             position: relative; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            gap: 10px; 
             text-shadow: 0 2px 4px #000, 0 0 15px rgba(212,175,55,0.6); 
-            outline: 1px dashed rgba(212,175,55,0.4); 
-            outline-offset: -6px; 
         }
 
+        /* الإطار الداخلي المتقطع لإضافة فخامة للبرواز */
+        .spiritual-phrase-inner {
+            position: absolute;
+            inset: 6px;
+            border: 1px dashed rgba(212, 175, 55, 0.4);
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        /* الزخارف الإسلامية على الجانبين */
         .spiritual-phrase::before, 
         .spiritual-phrase::after { 
             content: '۞'; 
             position: absolute; 
             top: 50%; 
             transform: translateY(-50%); 
-            font-size: 24px; 
+            font-size: 26px; 
             color: var(--gold); 
-            opacity: 0.6; 
+            opacity: 0.85; 
+            text-shadow: 0 0 10px rgba(212,175,55,0.4);
         }
 
-        .spiritual-phrase::before { right: 15px; } 
-        .spiritual-phrase::after { left: 15px; }
-        .spiritual-phrase i { font-size: 26px; color: var(--gold); }
+        .spiritual-phrase::before { right: 12px; } 
+        .spiritual-phrase::after { left: 12px; }
         
         /* =========================================
            أدوات البحث والفلترة
@@ -871,7 +881,7 @@
     </header>
 
     <div class="spiritual-phrase fade-in">
-        <i class="fas fa-star-and-crescent"></i> 
+        <div class="spiritual-phrase-inner"></div>
         <span id="dynamic-dhikr">هل صليت علي النبي اليوم؟</span>
     </div>
 
@@ -1294,7 +1304,7 @@
         const dhikrList = [
             "ألا بذكر الله تطمئن القلوب", 
             "سبحان الله وبحمده، سبحان الله العظيم", 
-            "استغفر الله العظيم وأتوب إليه", 
+            "أستغفر الله العظيم وأتوب إليه", 
             "لا إله إلا الله محمد رسول الله", 
             "لا حول ولا قوة إلا بالله"
         ];
@@ -2448,42 +2458,4 @@
                                             <p><i class="fas fa-envelope" style="color:var(--gold); margin-left: 5px;"></i> ${email}</p>
                                             <span><i class="fas fa-clock" style="margin-left: 3px;"></i> ${date}</span>
                                         </div>
-                                        <button class="btn" style="width: auto; padding: 10px 18px; background: rgba(255,59,48,0.1); color: var(--danger); border: 1px solid var(--danger); font-size: 14px; border-radius: 12px; transition: 0.2s;" onclick="window.deleteUserBackup('${docId}', '${email}')">
-                                            <i class="fas fa-trash-alt"></i> مسح
-                                        </button>
-                                   </div>`;
-            });
-        } catch (e) { 
-            list.innerHTML = `<div style="text-align:center; color:var(--danger); padding:20px; border: 1px solid var(--danger); border-radius: 15px;">حدث خطأ أثناء الجلب.<br><br><span style="font-size:11px;">${e.message}</span></div>`; 
-        }
-    };
-
-    window.deleteUserBackup = async function(docId, email) {
-        window.showCustomConfirm("تحذير أمني خطير", "هل أنت متأكد من مسح النسخة الاحتياطية الخاصة بـ:\n" + email, "danger", async function() {
-            try {
-                var btn = document.querySelector(`#admin-doc-${docId} button`); 
-                var originalHtml = btn.innerHTML; 
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; 
-                btn.disabled = true;
-                
-                await deleteDoc(doc(db, "users_data", docId)); 
-                document.getElementById(`admin-doc-${docId}`).style.display = 'none';
-                
-                var t = document.getElementById('toast'); 
-                t.style.background = "var(--success)"; 
-                document.getElementById('toast-msg').innerText = "تم مسح النسخة بنجاح!"; 
-                t.classList.add('show'); 
-                setTimeout(() => t.classList.remove('show'), 3000);
-            } catch (e) { 
-                window.showCustomConfirm("خطأ مسح", "خطأ أثناء المسح: " + e.message, "danger", null, true); 
-                if (btn) { 
-                    btn.innerHTML = originalHtml; 
-                    btn.disabled = false; 
-                } 
-            }
-        });
-    };
-</script>
-
-</body>
-</html>
+                                        <button class="btn" style="width: auto; padding: 10px 18px; background: rgba(255,59,48,0.1); color: var
