@@ -2290,29 +2290,17 @@
 
     window.logoutGoogle = function() {
         window.showCustomConfirm("تسجيل الخروج", "هل أنت متأكد أنك تريد إنهاء الجلسة وتسجيل الخروج من النظام بالكامل؟", "warning", function() {
-            var btn = document.querySelector('.fa-sign-out-alt').parentElement; 
-            var originalText = btn.innerHTML; 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            var icon = document.querySelector('.fa-sign-out-alt');
+            var btn = icon ? icon.parentElement : null; 
+            var originalText = btn ? btn.innerHTML : ''; 
+            if(btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             
             signOut(auth).then(() => { 
                 localStorage.removeItem("amer_cloud_email"); 
                 localStorage.removeItem("amer_v17_auth"); 
-                
-                if (window.AppDB) {
-                    window.AppDB.close();
-                }
-                var req = indexedDB.deleteDatabase("AmerEnterpriseDB_V17");
-                req.onsuccess = function () {
-                    window.location.reload();
-                };
-                req.onerror = function () {
-                    window.location.reload();
-                };
-                req.onblocked = function () {
-                    window.location.reload();
-                };
+                window.location.reload(); 
             }).catch((error) => { 
-                btn.innerHTML = originalText; 
+                if(btn) btn.innerHTML = originalText; 
                 window.showCustomConfirm("خطأ", "حدث خطأ: " + error.message, "danger", null, true); 
             });
         });
@@ -2347,4 +2335,181 @@
                         formData.append('upload_preset', uploadPreset);
                         
                         let response = await fetch(cloudinaryUrl, { method: 'POST', body: formData }); 
-                        let
+                        let data = await response.json();
+                        
+                        if (data.secure_url) { 
+                            media[k] = data.secure_url; 
+                        } else { 
+                            throw new Error("فشل الرفع لـ Cloudinary: " + (data.error ? data.error.message : "حدث خطأ غير معروف")); 
+                        }
+                    }
+                }
+                updatedClients.push(client); 
+                window.AppDB.transaction("clients_store","readwrite").objectStore("clients_store").put(client);
+            }
+            
+            const dataStr = JSON.stringify(updatedClients); 
+            const compressedData = LZString.compressToUTF16(dataStr);
+            
+            await setDoc(doc(db, "users_data", user.uid), { 
+                email: user.email, 
+                appData: compressedData, 
+                isCompressed: true, 
+                lastSaved: new Date().toISOString() 
+            });
+            
+            if(!silent) { 
+                setTimeout(() => t.classList.remove('show'), 1000); 
+                setTimeout(() => { 
+                    document.getElementById('toast-msg').innerText = "تم النسخ الاحتياطي التلقائي بنجاح!"; 
+                    t.style.background = "var(--success)"; 
+                    t.classList.add('show'); 
+                    setTimeout(() => t.classList.remove('show'), 3000); 
+                }, 1200); 
+            }
+        } catch (e) { 
+            console.error(e); 
+            if(!silent) { 
+                var t = document.getElementById('toast'); 
+                t.classList.remove('show'); 
+                window.showCustomConfirm("خطأ سحابي", "حدث خطأ أثناء الرفع السحابي:\n" + e.message, "danger", null, true); 
+            } 
+        }
+    };
+
+    window.loadMyDataFromCloud = async function(isAutoLoad = false) {
+        const user = auth.currentUser; 
+        if (!user) return;
+        
+        try {
+            var t = document.getElementById('toast'); 
+            if(!isAutoLoad) { 
+                t.style.background = "var(--info)"; 
+                document.getElementById('toast-msg').innerText = "جاري التحقق من النسخة السحابية..."; 
+                t.classList.add('show'); 
+            }
+            
+            const docSnap = await getDoc(doc(db, "users_data", user.uid));
+            if (docSnap.exists() && docSnap.data().appData) {
+                let cloudData = docSnap.data(); 
+                let finalData = cloudData.appData;
+                
+                if (cloudData.isCompressed) { 
+                    finalData = LZString.decompressFromUTF16(cloudData.appData); 
+                }
+                
+                const parsedData = JSON.parse(finalData);
+                
+                if(Array.isArray(parsedData)) {
+                    const countReq = window.AppDB.transaction("clients_store", "readonly").objectStore("clients_store").count();
+                    countReq.onsuccess = function() {
+                        if (isAutoLoad && countReq.result > 0) { 
+                            if(!isAutoLoad) t.classList.remove('show'); 
+                            window.saveMyDataToCloud(true); 
+                            return; 
+                        }
+                        
+                        const tx = window.AppDB.transaction("clients_store", "readwrite"); 
+                        const store = tx.objectStore("clients_store"); 
+                        store.clear();
+                        
+                        parsedData.forEach(client => store.add(client));
+                        
+                        tx.oncomplete = function() { 
+                            window.ClientsData = parsedData; 
+                            window.updateAreasData(); 
+                            if(typeof window.processFilters === 'function') window.processFilters(); 
+                            
+                            if(!isAutoLoad) { 
+                                setTimeout(() => t.classList.remove('show'), 1000); 
+                                setTimeout(() => { 
+                                    t.style.background = "var(--success)"; 
+                                    document.getElementById('toast-msg').innerText = "تم استرجاع بياناتك بنجاح!"; 
+                                    t.classList.add('show'); 
+                                    setTimeout(() => t.classList.remove('show'), 3000); 
+                                    if(document.getElementById('allClientsPage') && document.getElementById('allClientsPage').style.display === 'flex') window.processAllFilters(); 
+                                }, 1200); 
+                            }
+                        };
+                    };
+                }
+            } else { 
+                if(!isAutoLoad) { 
+                    setTimeout(() => t.classList.remove('show'), 1000); 
+                    setTimeout(() => { 
+                        t.style.background = "var(--danger)"; 
+                        document.getElementById('toast-msg').innerText = "لا توجد نسخة محفوظة في هذا الحساب"; 
+                        t.classList.add('show'); 
+                        setTimeout(() => t.classList.remove('show'), 3000); 
+                    }, 1200); 
+                } 
+            }
+        } catch (e) { 
+            console.error(e); 
+            if(!isAutoLoad) window.showCustomConfirm("خطأ استرجاع", "خطأ في الاسترجاع: " + e.message, "danger", null, true); 
+        }
+    };
+
+    window.loadAdminData = async function() {
+        var list = document.getElementById('admin-backups-list'); 
+        list.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="color:var(--gold); font-size:24px;"></i></div>';
+        
+        try {
+            const querySnapshot = await getDocs(collection(db, "users_data")); 
+            list.innerHTML = '';
+            
+            if (querySnapshot.empty) { 
+                list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 30px; font-weight: bold;">لا توجد نسخ احتياطية مسجلة بعد.</div>'; 
+                return; 
+            }
+            
+            querySnapshot.forEach((docSnap) => {
+                var data = docSnap.data(); 
+                var email = data.email || "غير معروف (نسخة قديمة)"; 
+                var date = data.lastSaved ? new Date(data.lastSaved).toLocaleString('ar-EG') : "تاريخ غير متوفر"; 
+                var docId = docSnap.id;
+                
+                list.innerHTML += `<div class="admin-item fade-in" id="admin-doc-${docId}">
+                                        <div class="admin-item-info">
+                                            <p><i class="fas fa-envelope" style="color:var(--gold); margin-left: 5px;"></i> ${email}</p>
+                                            <span><i class="fas fa-clock" style="margin-left: 3px;"></i> ${date}</span>
+                                        </div>
+                                        <button class="btn" style="width: auto; padding: 10px 18px; background: rgba(255,69,58,0.1); color: var(--danger); border: 1px solid var(--danger); font-size: 14px; border-radius: 12px; transition: 0.2s;" onclick="window.deleteUserBackup('${docId}', '${email}')">
+                                            <i class="fas fa-trash-alt"></i> مسح
+                                        </button>
+                                   </div>`;
+            });
+        } catch (e) { 
+            list.innerHTML = `<div style="text-align:center; color:var(--danger); padding:20px; border: 1px solid var(--danger); border-radius: 15px;">حدث خطأ أثناء الجلب.<br><br><span style="font-size:11px;">${e.message}</span></div>`; 
+        }
+    };
+
+    window.deleteUserBackup = async function(docId, email) {
+        window.showCustomConfirm("تحذير أمني خطير", "هل أنت متأكد من مسح النسخة الاحتياطية الخاصة بـ:\n" + email, "danger", async function() {
+            try {
+                var btn = document.querySelector(`#admin-doc-${docId} button`); 
+                var originalHtml = btn.innerHTML; 
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; 
+                btn.disabled = true;
+                
+                await deleteDoc(doc(db, "users_data", docId)); 
+                document.getElementById(`admin-doc-${docId}`).style.display = 'none';
+                
+                var t = document.getElementById('toast'); 
+                t.style.background = "var(--success)"; 
+                document.getElementById('toast-msg').innerText = "تم مسح النسخة بنجاح!"; 
+                t.classList.add('show'); 
+                setTimeout(() => t.classList.remove('show'), 3000);
+            } catch (e) { 
+                window.showCustomConfirm("خطأ مسح", "خطأ أثناء المسح: " + e.message, "danger", null, true); 
+                if (btn) { 
+                    btn.innerHTML = originalHtml; 
+                    btn.disabled = false; 
+                } 
+            }
+        });
+    };
+</script>
+
+</body>
+</html>
