@@ -1847,7 +1847,8 @@
         tx.objectStore("clients_store").add(client);
         tx.oncomplete = function() { 
             triggerToast("تم الإضافة محلياً بنجاح"); 
-            if(window.saveMyDataToCloud) window.saveMyDataToCloud(true); 
+            // تعديل: إجبار الرفع اللحظي وإظهاره للمستخدم لضمان الحفظ
+            if(window.saveMyDataToCloud) window.saveMyDataToCloud(false); 
         };
     }
 
@@ -1961,9 +1962,6 @@
     };
 
     function updateClientInDB(c, msg) { 
-        var index = ClientsData.findIndex(function(x) { return x.uuid === c.uuid; });
-        if(index !== -1) { ClientsData[index] = c; }
-
         processFilters(); 
         if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters(); 
         if(document.getElementById('viewClientModal').style.display === 'flex') openClientDetails(c.uuid); 
@@ -1972,7 +1970,8 @@
         
         AppDB.transaction("clients_store","readwrite").objectStore("clients_store").put(c).oncomplete = function() { 
             triggerToast(msg); 
-            if(window.saveMyDataToCloud) window.saveMyDataToCloud(true); 
+            // تعديل: إجبار الرفع اللحظي وإظهاره للمستخدم حتى يتأكد أنه تم حفظ الدفع في السحابة
+            if(window.saveMyDataToCloud) window.saveMyDataToCloud(false); 
         }; 
     }
 
@@ -1988,7 +1987,8 @@
             
             AppDB.transaction("clients_store","readwrite").objectStore("clients_store").delete(uuid).oncomplete = function() { 
                 triggerToast("تم الحذف بنجاح"); 
-                if(window.saveMyDataToCloud) window.saveMyDataToCloud(true); 
+                // تعديل: الرفع اللحظي بعد الحذف
+                if(window.saveMyDataToCloud) window.saveMyDataToCloud(false); 
             }; 
         });
     };
@@ -2184,7 +2184,8 @@
             if(document.getElementById('allClientsPage').style.display === 'flex') processAllFilters(); 
             closeModal('editClientModal'); 
             triggerToast("تم حفظ التعديلات محلياً"); 
-            if(window.saveMyDataToCloud) window.saveMyDataToCloud(true); 
+            // تعديل: إجبار الرفع اللحظي وإظهاره للمستخدم
+            if(window.saveMyDataToCloud) window.saveMyDataToCloud(false); 
             setTimeout(function() { openClientDetails(currentEditClient.uuid); }, 100); 
         };
         req.onerror = function() { window.showCustomConfirm("خطأ", "حدث خطأ أثناء الحفظ", "danger", null, true); };
@@ -2207,8 +2208,8 @@
         } 
     };
 
-    // الدالة المسؤولة عن تحديث التطبيق ومسح الكاش وجلب البيانات فوراً بدون إعادة تحميل الواجهة وتم حل مشكلة التوقيت
-    window.forceUpdateApp = function() {
+    // تعديل جوهري: التحديث اللحظي المزدوج لضمان عدم مسح البيانات
+    window.forceUpdateApp = async function() {
         var icon = document.querySelector('.fa-sync-alt');
         if(icon) icon.classList.add('fa-spin');
         
@@ -2226,15 +2227,22 @@
             });
         }
         
-        if(window.loadMyDataFromCloud) {
-            // الاستدعاء يتم من هنا، وإيقاف الأيقونة وتحديث الواجهة تم نقلهم لداخل الدالة لضمان التزامن
-            window.loadMyDataFromCloud(false);
-        } else {
-            setTimeout(function() {
+        try {
+            // مزامنة للأعلى: نقوم برفع البيانات المحلية الجديدة للسحابة أولاً لحمايتها
+            if(window.saveMyDataToCloud) {
+                await window.saveMyDataToCloud(true);
+            }
+            // مزامنة للأسفل: نسحب البيانات ونقوم بتحديث الواجهة بالكامل
+            if(window.loadMyDataFromCloud) {
+                await window.loadMyDataFromCloud(false);
+            } else {
                 if(typeof fetchClients === "function") fetchClients();
                 if(icon) icon.classList.remove('fa-spin');
                 triggerToast("تم التحديث اللحظي بنجاح");
-            }, 1500);
+            }
+        } catch(error) {
+            if(icon) icon.classList.remove('fa-spin');
+            triggerToast("حدث خطأ أثناء المزامنة اللحظية", "error");
         }
     };
 </script>
@@ -2356,6 +2364,7 @@
         });
     };
 
+    // تعديل لتخفيف الضغط على قاعدة البيانات وتسريع المزامنة
     window.saveMyDataToCloud = async function(silent = false) {
         const user = auth.currentUser; 
         if (!user) return;
@@ -2364,7 +2373,7 @@
             var t = document.getElementById('toast'); 
             if(!silent) { 
                 t.style.background = "var(--info)"; 
-                document.getElementById('toast-msg').innerText = "جاري الحفظ السحابي التلقائي..."; 
+                document.getElementById('toast-msg').innerText = "جاري الرفع اللحظي للسحابة..."; 
                 t.classList.add('show'); 
             }
             
@@ -2377,29 +2386,28 @@
                 let client = window.ClientsData[i]; 
                 let media = client.media; 
                 let keys = ['hm', 'ct'];
-                let needsDbUpdate = false;
+                let clientUpdated = false;
                 
                 for (let k of keys) {
                     if (media[k] && media[k].startsWith('data:image')) {
-                        try {
-                            let formData = new FormData(); 
-                            formData.append('file', media[k]); 
-                            formData.append('upload_preset', uploadPreset);
-                            
-                            let response = await fetch(cloudinaryUrl, { method: 'POST', body: formData }); 
-                            let data = await response.json();
-                            
-                            if (data.secure_url) { 
-                                media[k] = data.secure_url; 
-                                needsDbUpdate = true;
-                            }
-                        } catch (imgErr) {
-                            console.warn("تخطي رفع الصورة لتجنب توقف الحفظ:", imgErr);
+                        let formData = new FormData(); 
+                        formData.append('file', media[k]); 
+                        formData.append('upload_preset', uploadPreset);
+                        
+                        let response = await fetch(cloudinaryUrl, { method: 'POST', body: formData }); 
+                        let data = await response.json();
+                        
+                        if (data.secure_url) { 
+                            media[k] = data.secure_url; 
+                            clientUpdated = true;
+                        } else { 
+                            throw new Error("فشل الرفع لـ Cloudinary: " + (data.error ? data.error.message : "حدث خطأ غير معروف")); 
                         }
                     }
                 }
                 updatedClients.push(client); 
-                if(needsDbUpdate) {
+                // لا نكتب في قاعدة البيانات المحلية إلا إذا تغير رابط الصورة لكي لا نسبب تعليق
+                if(clientUpdated) {
                     window.AppDB.transaction("clients_store","readwrite").objectStore("clients_store").put(client);
                 }
             }
@@ -2419,7 +2427,7 @@
             if(!silent) { 
                 setTimeout(() => t.classList.remove('show'), 1000); 
                 setTimeout(() => { 
-                    document.getElementById('toast-msg').innerText = "تم النسخ الاحتياطي التلقائي بنجاح!"; 
+                    document.getElementById('toast-msg').innerText = "تم حفظ البيانات سحابياً بنجاح ✅"; 
                     t.style.background = "var(--success)"; 
                     t.classList.add('show'); 
                     setTimeout(() => t.classList.remove('show'), 3000); 
@@ -2443,7 +2451,7 @@
             var t = document.getElementById('toast'); 
             if(!isAutoLoad) { 
                 t.style.background = "var(--info)"; 
-                document.getElementById('toast-msg').innerText = "جاري التحقق من النسخة السحابية..."; 
+                document.getElementById('toast-msg').innerText = "جاري سحب التحديثات من السحابة..."; 
                 t.classList.add('show'); 
             }
             
@@ -2480,16 +2488,19 @@
                             window.ClientsData = parsedData; 
                             window.updateAreasData(); 
                             if(typeof window.processFilters === 'function') window.processFilters(); 
-                            if(typeof window.fetchClients === 'function') window.fetchClients(); // إجبار التطبيق على إعادة رسم كل الزبائن
+                            if(typeof window.fetchClients === 'function') window.fetchClients();
 
                             if(!isAutoLoad) { 
                                 setTimeout(() => t.classList.remove('show'), 1000); 
                                 setTimeout(() => { 
                                     t.style.background = "var(--success)"; 
-                                    document.getElementById('toast-msg').innerText = "تم استرجاع بياناتك بنجاح!"; 
+                                    document.getElementById('toast-msg').innerText = "تم مزامنة البيانات بالكامل بنجاح!"; 
                                     t.classList.add('show'); 
                                     setTimeout(() => t.classList.remove('show'), 3000); 
+                                    
+                                    // تحديث الواجهات النشطة لضمان عرض البيانات الجديدة
                                     if(document.getElementById('allClientsPage') && document.getElementById('allClientsPage').style.display === 'flex') window.processAllFilters(); 
+                                    if(document.getElementById('lateClientsModal') && document.getElementById('lateClientsModal').style.display === 'flex') window.processLateFilters(); 
                                     
                                     var syncIcon = document.querySelector('.fa-sync-alt');
                                     if(syncIcon) syncIcon.classList.remove('fa-spin');
