@@ -1051,21 +1051,27 @@
             <textarea id="add-notes" class="form-input" rows="2" style="resize:none;" placeholder="اكتب العنوان بالتفصيل أو أي ملاحظة..."></textarea>
         </div>
         <div class="form-group">
-            <label class="form-label"><i class="fas fa-link"></i> رابط الموقع الخارجي (اختياري)</label>
+            <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
+                <span><i class="fas fa-link"></i> رابط الموقع الخارجي (اختياري)</span>
+                <span onclick="openUploadWhatsapp()" style="color:#25D366; font-size:10px; cursor:pointer;"><i class="fab fa-whatsapp"></i> واتساب</span>
+            </label>
             <input type="url" id="add-loc-link" class="form-input" placeholder="انسخ رابط جوجل ماب هنا...">
         </div>
 
         <div class="media-grid" style="grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
             <div class="media-box" id="btn-gps" onclick="startFastLocationTracking()">
+                <div onclick="event.stopPropagation(); openUploadWhatsapp()" style="position:absolute; top:5px; left:5px; z-index:3; width:22px; height:22px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fab fa-whatsapp" style="font-size:12px; color:#fff; margin:0;"></i></div>
                 <i class="fas fa-map-marker-alt"></i>
                 <span>تثبيت الموقع</span>
             </div>
             <div class="media-box" onclick="captureImage('hm')">
+                <div onclick="event.stopPropagation(); openUploadWhatsapp()" style="position:absolute; top:5px; left:5px; z-index:3; width:22px; height:22px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fab fa-whatsapp" style="font-size:12px; color:#fff; margin:0;"></i></div>
                 <i class="fas fa-home"></i>
                 <span>المنزل</span>
                 <img id="img-hm">
             </div>
             <div class="media-box" onclick="captureImage('ct')">
+                <div onclick="event.stopPropagation(); openUploadWhatsapp()" style="position:absolute; top:5px; left:5px; z-index:3; width:22px; height:22px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fab fa-whatsapp" style="font-size:12px; color:#fff; margin:0;"></i></div>
                 <i class="fas fa-file-signature"></i>
                 <span>العقد</span>
                 <img id="img-ct">
