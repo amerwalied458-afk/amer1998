@@ -985,6 +985,15 @@
             <h2>إضافة زبون جديد</h2>
             <div class="close-btn" onclick="closeModal('addClientModal')"><i class="fas fa-times"></i></div>
         </div>
+
+        <div class="grid-2" style="margin-bottom:15px;">
+            <button type="button" class="btn btn-secondary" style="padding:14px; font-size:12px;" onclick="importFromContacts()"><i class="fas fa-address-book"></i> استيراد من جهات الاتصال</button>
+            <div style="display:flex; gap:6px;">
+                <button type="button" class="btn btn-secondary" style="padding:14px; font-size:12px; flex:1;" onclick="openUploadWhatsapp()"><i class="fab fa-whatsapp" style="color:#25D366;"></i> واتساب الرفع</button>
+                <div class="icon-btn" style="width:auto; padding:0 12px; border-radius:12px;" onclick="setUploadWhatsappNumber()" title="تغيير الرقم المحفوظ"><i class="fas fa-cog"></i></div>
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="form-label">الاسم مثال ف1ص1</label>
             <input type="text" id="add-name" class="form-input">
@@ -2244,6 +2253,76 @@
             if(icon) icon.classList.remove('fa-spin');
             triggerToast("حدث خطأ أثناء المزامنة اللحظية", "error");
         }
+    };
+
+    // ==================================================================
+    // ميزة: استيراد جهات الاتصال (اسم + رقم هاتف) مباشرة إلى فورم الإضافة
+    // ==================================================================
+    window.importFromContacts = async function() {
+        // هذه الميزة (Contact Picker API) مدعومة حالياً فقط على متصفح Chrome
+        // لأجهزة أندرويد (وأفضل استخدام لها عند تثبيت الموقع كتطبيق PWA)
+        if (!('contacts' in navigator) || !('ContactsManager' in window)) {
+            alert("عذراً، هذه الميزة غير مدعومة على هذا الجهاز أو المتصفح.\nتعمل حالياً فقط على متصفح Chrome لأجهزة أندرويد.");
+            return;
+        }
+        try {
+            const props = ['name', 'tel'];
+            const opts = { multiple: false };
+            const contacts = await navigator.contacts.select(props, opts);
+
+            if (!contacts || contacts.length === 0) return;
+            const contact = contacts[0];
+
+            if (contact.name && contact.name.length > 0) {
+                document.getElementById('add-name').value = contact.name[0];
+            }
+
+            if (contact.tel && contact.tel.length > 0) {
+                let phone = contact.tel[0].replace(/[^0-9]/g, '');
+                // تنظيف الرقم من كود الدولة (20) لو موجود، عشان يتوافق مع صيغة الأرقام المحفوظة بالفعل في البرنامج
+                if (phone.startsWith('0020')) {
+                    phone = phone.substring(4);
+                } else if (phone.startsWith('20') && phone.length > 10) {
+                    phone = phone.substring(2);
+                }
+                if (!phone.startsWith('0')) {
+                    phone = '0' + phone;
+                }
+                document.getElementById('add-phone').value = phone;
+            }
+
+            triggerToast("تم استيراد بيانات جهة الاتصال بنجاح");
+        } catch (e) {
+            console.error(e);
+            alert("تم إلغاء الاستيراد أو حدث خطأ: " + e.message);
+        }
+    };
+
+    // ==================================================================
+    // ميزة: اختصار فتح محادثة واتساب لرقم ثابت (رفع الصور واللوكيشن يدوياً)
+    // ==================================================================
+    function getUploadWhatsappNumber() {
+        return localStorage.getItem('uploadWhatsappNumber') || '';
+    }
+
+    window.setUploadWhatsappNumber = function() {
+        const current = getUploadWhatsappNumber();
+        const num = prompt("اكتب رقم الواتساب بالصيغة الدولية بدون علامة +\nمثال: 201001234567", current);
+        if (num !== null && num.trim() !== '') {
+            localStorage.setItem('uploadWhatsappNumber', num.trim().replace(/[^0-9]/g, ''));
+            triggerToast("تم حفظ رقم واتساب الرفع بنجاح");
+        }
+    };
+
+    window.openUploadWhatsapp = function() {
+        let num = getUploadWhatsappNumber();
+        if (!num) {
+            num = prompt("لم يتم تحديد رقم بعد.\nاكتب رقم الواتساب بالصيغة الدولية بدون علامة + (مثال: 201001234567):");
+            if (!num || num.trim() === '') return;
+            num = num.trim().replace(/[^0-9]/g, '');
+            localStorage.setItem('uploadWhatsappNumber', num);
+        }
+        window.open('https://wa.me/' + num, '_blank');
     };
 </script>
 
