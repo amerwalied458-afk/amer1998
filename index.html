@@ -996,7 +996,7 @@
 
         <div class="form-group">
             <label class="form-label">الاسم مثال ف1ص1</label>
-            <input type="text" id="add-name" class="form-input">
+            <input type="text" id="add-name" class="form-input" autocomplete="name" name="fullname">
         </div>
         <div class="grid-2">
             <div class="form-group">
@@ -1047,7 +1047,7 @@
         
         <div class="form-group" style="margin-top:15px;">
             <label class="form-label">الهاتف</label>
-            <input type="tel" id="add-phone" class="form-input">
+            <input type="tel" id="add-phone" class="form-input" autocomplete="tel" name="phone">
         </div>
         <div class="form-group">
             <label class="form-label">العنوان / ملاحظات</label>
@@ -1080,6 +1080,20 @@
         </button>
     </div>
     <div class="floating-back-btn" onclick="closeModal('addClientModal')"><i class="fas fa-arrow-right"></i></div>
+</div>
+
+<div id="whatsappNumberModal" class="modal-overlay" style="align-items:center; justify-content:center;">
+    <div class="modal-content slide-up" style="max-width:320px; width:88%; border-radius:20px; padding:25px; max-height:none;">
+        <div class="m-head" style="margin-bottom:15px;">
+            <h2 style="font-size:16px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i> رقم واتساب الرفع</h2>
+            <div class="close-btn" onclick="closeModal('whatsappNumberModal')"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">اكتب الرقم بالصيغة الدولية بدون علامة +</label>
+            <input type="tel" id="whatsapp-number-input" class="form-input" placeholder="مثال: 201001234567" inputmode="numeric" autocomplete="tel">
+        </div>
+        <button class="btn btn-primary" style="margin-top:10px;" onclick="saveUploadWhatsappNumber()"><i class="fas fa-check"></i> حفظ الرقم</button>
+    </div>
 </div>
 
 <div id="viewClientModal" class="modal-overlay">
@@ -2259,43 +2273,43 @@
     // ميزة: استيراد جهات الاتصال (اسم + رقم هاتف) مباشرة إلى فورم الإضافة
     // ==================================================================
     window.importFromContacts = async function() {
-        // هذه الميزة (Contact Picker API) مدعومة حالياً فقط على متصفح Chrome
-        // لأجهزة أندرويد (وأفضل استخدام لها عند تثبيت الموقع كتطبيق PWA)
-        if (!('contacts' in navigator) || !('ContactsManager' in window)) {
-            alert("عذراً، هذه الميزة غير مدعومة على هذا الجهاز أو المتصفح.\nتعمل حالياً فقط على متصفح Chrome لأجهزة أندرويد.");
+        // Contact Picker API (استيراد بضغطة واحدة) مدعومة فقط على Chrome لأجهزة أندرويد.
+        // آبل لا تسمح بهذه الميزة في أي متصفح على الآيفون (حتى كروم على آيفون هو Safari من الداخل بحكم قوانين آبل)،
+        // فمفيش طريقة برمجية تقدر "تفتح" جهات اتصال آيفون من المتصفح مباشرة.
+        if ('contacts' in navigator && 'ContactsManager' in window) {
+            try {
+                const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+                if (!contacts || contacts.length === 0) return;
+                const contact = contacts[0];
+
+                if (contact.name && contact.name.length > 0) {
+                    document.getElementById('add-name').value = contact.name[0];
+                }
+                if (contact.tel && contact.tel.length > 0) {
+                    let phone = contact.tel[0].replace(/[^0-9]/g, '');
+                    if (phone.startsWith('0020')) {
+                        phone = phone.substring(4);
+                    } else if (phone.startsWith('20') && phone.length > 10) {
+                        phone = phone.substring(2);
+                    }
+                    if (!phone.startsWith('0')) {
+                        phone = '0' + phone;
+                    }
+                    document.getElementById('add-phone').value = phone;
+                }
+                triggerToast("تم استيراد بيانات جهة الاتصال بنجاح");
+            } catch (e) {
+                console.error(e);
+            }
             return;
         }
-        try {
-            const props = ['name', 'tel'];
-            const opts = { multiple: false };
-            const contacts = await navigator.contacts.select(props, opts);
 
-            if (!contacts || contacts.length === 0) return;
-            const contact = contacts[0];
-
-            if (contact.name && contact.name.length > 0) {
-                document.getElementById('add-name').value = contact.name[0];
-            }
-
-            if (contact.tel && contact.tel.length > 0) {
-                let phone = contact.tel[0].replace(/[^0-9]/g, '');
-                // تنظيف الرقم من كود الدولة (20) لو موجود، عشان يتوافق مع صيغة الأرقام المحفوظة بالفعل في البرنامج
-                if (phone.startsWith('0020')) {
-                    phone = phone.substring(4);
-                } else if (phone.startsWith('20') && phone.length > 10) {
-                    phone = phone.substring(2);
-                }
-                if (!phone.startsWith('0')) {
-                    phone = '0' + phone;
-                }
-                document.getElementById('add-phone').value = phone;
-            }
-
-            triggerToast("تم استيراد بيانات جهة الاتصال بنجاح");
-        } catch (e) {
-            console.error(e);
-            alert("تم إلغاء الاستيراد أو حدث خطأ: " + e.message);
-        }
+        // البديل على آيفون (وأي متصفح تاني مش بيدعم الميزة): 
+        // نستخدم اقتراحات جهات الاتصال المدمجة في كيبورد آيفون نفسه (QuickType)
+        // اللي بتظهر تلقائياً فوق الكيبورد لما تدوس في حقل بصفة autocomplete="name" أو "tel"
+        const nameField = document.getElementById('add-name');
+        nameField.focus();
+        triggerToast("دوس جوه حقل الاسم أو الهاتف، هيظهرلك اقتراح جهات الاتصال فوق الكيبورد تلقائياً 📱");
     };
 
     // ==================================================================
@@ -2305,22 +2319,34 @@
         return localStorage.getItem('uploadWhatsappNumber') || '';
     }
 
+    // بدل الاعتماد على window.prompt() اللي بيفشل أحياناً في الكتابة (خصوصاً لو الموقع
+    // متضاف كـ"تطبيق" على الشاشة الرئيسية)، بنستخدم مودال حقيقي داخل الصفحة نفسها.
     window.setUploadWhatsappNumber = function() {
         const current = getUploadWhatsappNumber();
-        const num = prompt("اكتب رقم الواتساب بالصيغة الدولية بدون علامة +\nمثال: 201001234567", current);
-        if (num !== null && num.trim() !== '') {
-            localStorage.setItem('uploadWhatsappNumber', num.trim().replace(/[^0-9]/g, ''));
-            triggerToast("تم حفظ رقم واتساب الرفع بنجاح");
+        document.getElementById('whatsapp-number-input').value = current;
+        openModal('whatsappNumberModal');
+        setTimeout(() => document.getElementById('whatsapp-number-input').focus(), 300);
+    };
+
+    window.saveUploadWhatsappNumber = function() {
+        const raw = document.getElementById('whatsapp-number-input').value;
+        const num = raw.trim().replace(/[^0-9]/g, '');
+        if (!num) {
+            triggerToast("اكتب رقم صحيح", "error");
+            return;
         }
+        localStorage.setItem('uploadWhatsappNumber', num);
+        closeModal('whatsappNumberModal');
+        triggerToast("تم حفظ رقم واتساب الرفع بنجاح");
     };
 
     window.openUploadWhatsapp = function() {
-        let num = getUploadWhatsappNumber();
+        const num = getUploadWhatsappNumber();
         if (!num) {
-            num = prompt("لم يتم تحديد رقم بعد.\nاكتب رقم الواتساب بالصيغة الدولية بدون علامة + (مثال: 201001234567):");
-            if (!num || num.trim() === '') return;
-            num = num.trim().replace(/[^0-9]/g, '');
-            localStorage.setItem('uploadWhatsappNumber', num);
+            // مفيش رقم محفوظ لسه: نفتح مودال الإدخال بدل ما نعمل حاجة تانية
+            setUploadWhatsappNumber();
+            triggerToast("اكتب الرقم واحفظه، وبعدين اضغط على زر واتساب تاني");
+            return;
         }
         window.open('https://wa.me/' + num, '_blank');
     };
