@@ -988,10 +988,7 @@
 
         <div class="grid-2" style="margin-bottom:15px;">
             <button type="button" class="btn btn-secondary" style="padding:14px; font-size:12px;" onclick="openContactsApp()"><i class="fas fa-address-book"></i> فتح جهات الاتصال</button>
-            <div style="display:flex; gap:6px;">
-                <button type="button" class="btn btn-secondary" style="padding:14px; font-size:12px; flex:1;" onclick="openUploadWhatsapp()"><i class="fab fa-whatsapp" style="color:#25D366;"></i> واتساب الرفع</button>
-                <div class="icon-btn" style="width:auto; padding:0 12px; border-radius:12px;" onclick="setUploadWhatsappNumber()" title="تغيير الرقم المحفوظ"><i class="fas fa-cog"></i></div>
-            </div>
+            <button type="button" class="btn btn-secondary" style="padding:14px; font-size:12px;" onclick="openUploadWhatsapp()"><i class="fab fa-whatsapp" style="color:#25D366;"></i> فتح واتساب</button>
         </div>
 
         <div class="form-group">
@@ -1080,20 +1077,6 @@
         </button>
     </div>
     <div class="floating-back-btn" onclick="closeModal('addClientModal')"><i class="fas fa-arrow-right"></i></div>
-</div>
-
-<div id="whatsappNumberModal" class="modal-overlay" style="align-items:center; justify-content:center;">
-    <div class="modal-content slide-up" style="max-width:320px; width:88%; border-radius:20px; padding:25px; max-height:none;">
-        <div class="m-head" style="margin-bottom:15px;">
-            <h2 style="font-size:16px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i> رقم واتساب الرفع</h2>
-            <div class="close-btn" onclick="closeModal('whatsappNumberModal')"><i class="fas fa-times"></i></div>
-        </div>
-        <div class="form-group">
-            <label class="form-label">اكتب الرقم بالصيغة الدولية بدون علامة +</label>
-            <input type="tel" id="whatsapp-number-input" class="form-input" placeholder="مثال: 201001234567" inputmode="numeric" autocomplete="tel">
-        </div>
-        <button class="btn btn-primary" style="margin-top:10px;" onclick="saveUploadWhatsappNumber()"><i class="fas fa-check"></i> حفظ الرقم</button>
-    </div>
 </div>
 
 <div id="viewClientModal" class="modal-overlay">
@@ -2286,71 +2269,15 @@
     };
 
     // ==================================================================
-    // ميزة: اختصار فتح محادثة واتساب لرقم ثابت (رفع الصور واللوكيشن يدوياً)
+    // ميزة: زر يفتح تطبيق واتساب نفسه (شاشة المحادثات) عشان تختار المحادثة
+    // اللي فيها صور البيت والفاتورة واللوكيشن بنفسك، بدل الاعتماد على رقم
+    // ثابت كان بيسبب مشاكل في فتح الرابط.
     // ==================================================================
-    // تنظيف وتصحيح صيغة الرقم تلقائياً لصيغة دولية سليمة (شرط أساسي لفتح واتساب بنجاح):
-    // - يشيل أي حروف أو رموز أو مسافات مش أرقام
-    // - لو الرقم مصري محلي (بيبدأ بصفر، زي 01001234567) بيضيفله كود مصر 20 تلقائياً ويشيل الصفر
-    function normalizeWhatsappNumber(raw) {
-        let num = (raw || '').replace(/[^0-9]/g, '');
-        if (num.startsWith('0')) {
-            num = '20' + num.substring(1);
-        }
-        return num;
-    }
-
-    // بنطبق التصحيح كل مرة بنقرأ فيها الرقم كمان، عشان أي رقم كان محفوظ قبل كده
-    // بصيغة خاطئة (وهو سبب ظهور رسالة "تعذر فتح هذا الرابط") يتصلح تلقائياً من غير
-    // ما تحتاج تدخله من الأول.
-    function getUploadWhatsappNumber() {
-        const raw = localStorage.getItem('uploadWhatsappNumber') || '';
-        return normalizeWhatsappNumber(raw);
-    }
-
-    // بدل الاعتماد على window.prompt() اللي بيفشل أحياناً في الكتابة (خصوصاً لو الموقع
-    // متضاف كـ"تطبيق" على الشاشة الرئيسية)، بنستخدم مودال حقيقي داخل الصفحة نفسها.
-    window.setUploadWhatsappNumber = function() {
-        const current = getUploadWhatsappNumber();
-        document.getElementById('whatsapp-number-input').value = current;
-        openModal('whatsappNumberModal');
-        setTimeout(() => document.getElementById('whatsapp-number-input').focus(), 300);
-    };
-
-    window.saveUploadWhatsappNumber = function() {
-        const raw = document.getElementById('whatsapp-number-input').value;
-        const num = normalizeWhatsappNumber(raw);
-        if (!num || num.length < 10) {
-            triggerToast("اكتب رقم صحيح", "error");
-            return;
-        }
-        localStorage.setItem('uploadWhatsappNumber', num);
-        closeModal('whatsappNumberModal');
-        triggerToast("تم حفظ رقم واتساب الرفع بنجاح");
-    };
-
     window.openUploadWhatsapp = function() {
-        const num = getUploadWhatsappNumber();
-        if (!num) {
-            // مفيش رقم محفوظ لسه: نفتح مودال الإدخال بدل ما نعمل حاجة تانية
-            setUploadWhatsappNumber();
-            triggerToast("اكتب الرقم واحفظه، وبعدين اضغط على زر واتساب تاني");
-            return;
-        }
-        // نجرب أولاً سكيم التطبيق المباشر (whatsapp://) لأنه بيفتح المحادثة فوراً
-        // بدل صفحة wa.me الوسيطة اللي بتطلب ضغطة تانية "Continue to Chat".
-        // ولو التطبيق مش متظبط يفتح (نادراً)، بنرجع تلقائياً لرابط wa.me كبديل.
-        const appUrl = 'whatsapp://send?phone=' + num;
-        const webUrl = 'https://wa.me/' + num;
-        let appOpened = false;
-        const blurHandler = function() { appOpened = true; };
-        window.addEventListener('blur', blurHandler);
-        window.location.href = appUrl;
+        window.location.href = 'whatsapp://';
         setTimeout(function() {
-            window.removeEventListener('blur', blurHandler);
-            if (!appOpened) {
-                window.open(webUrl, '_blank');
-            }
-        }, 1000);
+            triggerToast("لو التطبيق مفتحش لوحده، افتح واتساب من شاشة هاتفك مباشرة");
+        }, 800);
     };
 </script>
 
