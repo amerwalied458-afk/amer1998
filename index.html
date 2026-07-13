@@ -2304,12 +2304,42 @@
             return;
         }
 
-        // البديل على آيفون (وأي متصفح تاني مش بيدعم الميزة): 
-        // نستخدم اقتراحات جهات الاتصال المدمجة في كيبورد آيفون نفسه (QuickType)
-        // اللي بتظهر تلقائياً فوق الكيبورد لما تدوس في حقل بصفة autocomplete="name" أو "tel"
-        const nameField = document.getElementById('add-name');
-        nameField.focus();
-        triggerToast("دوس جوه حقل الاسم أو الهاتف، هيظهرلك اقتراح جهات الاتصال فوق الكيبورد تلقائياً 📱");
+        // البديل على آيفون: مفيش أي متصفح (سفاري ولا كروم) بيسمح لصفحة ويب تفتح
+        // جهات اتصال آيفون مباشرة - ده قرار من آبل نفسها ومفيش حل برمجي بديل لده.
+        // العملي بقى: تنسخ الاسم أو الرقم من تطبيق جهات الاتصال، وتدوس هنا فيتم اللصق تلقائياً.
+        try {
+            if (!navigator.clipboard || !navigator.clipboard.readText) {
+                alert("جهازك/متصفحك ما بيدعمش اللصق التلقائي من الحافظة.\nافتح تطبيق جهات الاتصال، انسخ الاسم أو الرقم يدوياً (اضغط مطولاً > نسخ)، وألصقه في الخانة مباشرة.");
+                return;
+            }
+            const text = (await navigator.clipboard.readText()).trim();
+            if (!text) {
+                alert("مفيش حاجة منسوخة في الحافظة دلوقتي.\n1) روح لتطبيق جهات الاتصال\n2) اضغط مطولاً على الاسم أو الرقم واختر نسخ\n3) ارجع هنا ودوس على الزر ده تاني");
+                return;
+            }
+            const digitsOnly = text.replace(/[^0-9]/g, '');
+            if (digitsOnly.length >= 6) {
+                // النص المنسوخ يبدو رقم هاتف
+                let phone = digitsOnly;
+                if (phone.startsWith('0020')) {
+                    phone = phone.substring(4);
+                } else if (phone.startsWith('20') && phone.length > 10) {
+                    phone = phone.substring(2);
+                }
+                if (!phone.startsWith('0')) {
+                    phone = '0' + phone;
+                }
+                document.getElementById('add-phone').value = phone;
+                triggerToast("تم لصق الرقم ✅ - دلوقتي انسخ الاسم ودوس الزر تاني لو محتاج");
+            } else {
+                // النص المنسوخ يبدو اسم
+                document.getElementById('add-name').value = text;
+                triggerToast("تم لصق الاسم ✅ - دلوقتي انسخ الرقم ودوس الزر تاني لو محتاج");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("محتاج تسمح بإذن اللصق من الحافظة أول مرة يظهرلك. جرب تدوس على الزر تاني.");
+        }
     };
 
     // ==================================================================
@@ -2348,7 +2378,21 @@
             triggerToast("اكتب الرقم واحفظه، وبعدين اضغط على زر واتساب تاني");
             return;
         }
-        window.open('https://wa.me/' + num, '_blank');
+        // نجرب أولاً سكيم التطبيق المباشر (whatsapp://) لأنه بيفتح المحادثة فوراً
+        // بدل صفحة wa.me الوسيطة اللي بتطلب ضغطة تانية "Continue to Chat".
+        // ولو التطبيق مش متظبط يفتح (نادراً)، بنرجع تلقائياً لرابط wa.me كبديل.
+        const appUrl = 'whatsapp://send?phone=' + num;
+        const webUrl = 'https://wa.me/' + num;
+        let appOpened = false;
+        const blurHandler = function() { appOpened = true; };
+        window.addEventListener('blur', blurHandler);
+        window.location.href = appUrl;
+        setTimeout(function() {
+            window.removeEventListener('blur', blurHandler);
+            if (!appOpened) {
+                window.open(webUrl, '_blank');
+            }
+        }, 1000);
     };
 </script>
 
