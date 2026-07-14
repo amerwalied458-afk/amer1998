@@ -894,6 +894,9 @@
             <button onclick="openAllClients()" style="flex:1; padding:15px; border-radius:15px; background:rgba(212,175,55,0.15); border:1px solid var(--gold); color:var(--gold); font-weight:900; font-size:15px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px; box-shadow: 0 4px 15px rgba(212,175,55,0.1); transition: transform 0.1s;"><i class="fas fa-users"></i> كل الزبائن</button>
             <button onclick="openLateClientsModal()" style="flex:1; padding:15px; border-radius:15px; background:rgba(255,69,58,0.15); border:1px solid var(--danger); color:var(--danger); font-weight:900; font-size:15px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px; box-shadow: 0 4px 15px rgba(255,69,58,0.1); transition: transform 0.1s;"><i class="fas fa-exclamation-triangle"></i> المتأخرات</button>
         </div>
+        <div style="display: flex; gap: 10px; margin-top:10px;">
+            <button onclick="openUpcomingClientsModal()" style="flex:1; padding:15px; border-radius:15px; background:rgba(37,211,102,0.15); border:1px solid #25D366; color:#25D366; font-weight:900; font-size:15px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px; box-shadow: 0 4px 15px rgba(37,211,102,0.1); transition: transform 0.1s;"><i class="fab fa-whatsapp"></i> تذكير المواعيد القادمة</button>
+        </div>
     </header>
 
     <div class="spiritual-phrase fade-in">
@@ -977,6 +980,14 @@
     </div>
     <main id="late-clients-list"></main>
     <div class="floating-back-btn" onclick="closeModal('lateClientsModal')"><i class="fas fa-arrow-right"></i></div>
+</div>
+
+<div id="upcomingClientsModal" class="modal-overlay" style="background: var(--bg); flex-direction: column; justify-content: flex-start;">
+    <header style="padding: 15px; background: var(--surface); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border);">
+        <h2 style="font-size: 18px; color: #25D366; margin: 0;"><i class="fab fa-whatsapp"></i> تذكير المواعيد القادمة (خلال يومين)</h2>
+    </header>
+    <main id="upcoming-clients-list" style="padding:15px;"></main>
+    <div class="floating-back-btn" onclick="closeModal('upcomingClientsModal')"><i class="fas fa-arrow-right"></i></div>
 </div>
 
 <div id="addClientModal" class="modal-overlay">
@@ -1616,7 +1627,7 @@
                 if(match) {
                     count++; 
                     var bHtml = '<span class="c-badge badge-red">' + (hasCarry ? c.statusMsg : 'متأخر ⚠️') + '</span>';
-                    list.innerHTML += '<div class="client-card fade-in" style="margin-bottom:10px; border-right: 5px solid var(--danger); position:relative; padding-left:50px;" onclick="closeModal(\'lateClientsModal\'); openClientDetails(\'' + c.uuid + '\'); setTimeout(function(){ showMonthBox(\'' + c.uuid + '\', ' + targetMonth + '); }, 400);"><div class="c-info"><h3>' + c.name + '</h3><p>📍 ' + c.area + '</p>' + bHtml + '</div><div class="c-financials"><span class="rem-amount">' + rem.toLocaleString() + ' ج</span><div style="font-size:10px; color:#555;">يوم ' + c.collectionDay + '</div></div><div onclick="event.stopPropagation(); sendLateReminder(\'' + c.uuid + '\')" title="ابعت تذكير واتساب" style="position:absolute; bottom:10px; left:10px; width:34px; height:34px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(37,211,102,0.4); z-index:2;"><i class="fab fa-whatsapp" style="color:#fff; font-size:17px;"></i></div></div>';
+                    list.innerHTML += '<div class="client-card fade-in" style="margin-bottom:10px; border-right: 5px solid var(--danger);" onclick="closeModal(\'lateClientsModal\'); openClientDetails(\'' + c.uuid + '\'); setTimeout(function(){ showMonthBox(\'' + c.uuid + '\', ' + targetMonth + '); }, 400);"><div class="c-info"><h3>' + c.name + '</h3><p>📍 ' + c.area + '</p>' + bHtml + '</div><div class="c-financials"><span class="rem-amount">' + rem.toLocaleString() + ' ج</span><div style="font-size:10px; color:#555;">يوم ' + c.collectionDay + '</div></div></div>';
                 }
             }
         });
@@ -1632,18 +1643,58 @@
     };
 
     // ==================================================================
-    // ميزة: إرسال رسالة تذكير جاهزة عبر واتساب للعميل المتأخر
-    // بيستخدم رابط wa.me الرسمي مع نص جاهز (?text=) وده مدعوم ورسمي 100%
+    // ميزة: تذكير العملاء اللي ميعادهم بعد يومين (باللغة الفرنسية - السنغال)
     // ==================================================================
-    window.sendLateReminder = function(uuid) {
+    var frMonths = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+
+    // تحويل الرقم لصيغة دولية سنغالية سليمة (كود الدولة 221)
+    function normalizeSenegalPhone(raw) {
+        var num = (raw || '').replace(/[^0-9]/g, '');
+        if (num.startsWith('00221')) num = num.substring(2);
+        if (num.startsWith('221') && num.length > 9) return num;
+        if (num.startsWith('0')) num = num.substring(1);
+        return '221' + num;
+    }
+
+    function getUpcomingClients() {
+        var today = new Date(); 
+        today.setHours(0,0,0,0);
+        var curM = today.getMonth() + 1;
+        return ClientsData.filter(function(c) {
+            var rem = c.totalAmount - c.paidAmount;
+            if (rem <= 0) return false;
+            if (c.planMonths.indexOf(curM) === -1) return false;
+            if (c.paidMonthsLog.indexOf(curM) !== -1) return false;
+            var dueDate = new Date(today.getFullYear(), today.getMonth(), c.collectionDay);
+            dueDate.setHours(0,0,0,0);
+            var diffDays = Math.round((dueDate - today) / 86400000);
+            return diffDays === 2;
+        });
+    }
+
+    window.openUpcomingClientsModal = function() {
+        var list = document.getElementById('upcoming-clients-list');
+        var upcoming = getUpcomingClients();
+        list.innerHTML = '';
+        if (upcoming.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:bold;">مفيش مواعيد خلال اليومين الجايين حالياً.</div>';
+        } else {
+            upcoming.forEach(function(c) {
+                var rem = c.totalAmount - c.paidAmount;
+                list.innerHTML += '<div class="client-card fade-in" style="margin-bottom:10px; border-right: 5px solid #25D366; position:relative; padding-left:50px;"><div class="c-info"><h3>' + c.name + '</h3><p>📍 ' + c.area + '</p><span class="c-badge" style="background:rgba(37,211,102,0.15); color:#25D366;">الموعد بعد يومين (يوم ' + c.collectionDay + ')</span></div><div class="c-financials"><span class="rem-amount">' + rem.toLocaleString() + ' ج</span></div><div onclick="sendUpcomingReminder(\'' + c.uuid + '\')" title="Envoyer un rappel WhatsApp" style="position:absolute; bottom:10px; left:10px; width:34px; height:34px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(37,211,102,0.4); z-index:2;"><i class="fab fa-whatsapp" style="color:#fff; font-size:17px;"></i></div></div>';
+            });
+        }
+        openModal('upcomingClientsModal');
+    };
+
+    window.sendUpcomingReminder = function(uuid) {
         var c = ClientsData.find(function(x){ return x.uuid === uuid; });
         if (!c) return;
-        var rem = c.totalAmount - c.paidAmount;
-        var lateMonths = c.planMonths.filter(function(m){ return c.paidMonthsLog.indexOf(m) === -1; });
-        var monthName = lateMonths.length > 0 ? arMonths[lateMonths[0] - 1] : '';
-        var msg = 'السلام عليكم أ/' + c.name + '،\nتذكير بخصوص قسط شهر ' + monthName + '.\nالمبلغ المتبقي: ' + rem.toLocaleString() + ' جنيه.\nبرجاء السداد في أقرب وقت ممكن، وشكراً لتعاملكم معنا 🙏';
-        var phone = (c.phone || '').replace(/[^0-9]/g, '');
-        if (phone.startsWith('0')) phone = '2' + phone; else if (!phone.startsWith('20')) phone = '20' + phone;
+        var today = new Date();
+        var curM = today.getMonth() + 1;
+        var monthNameFr = frMonths[curM - 1];
+        var msg = 'Bonjour ' + c.name + ',\nPetit rappel : votre échéance du mois de ' + monthNameFr + ' est prévue dans 2 jours (le ' + c.collectionDay + ').\nMerci de bien vouloir préparer le règlement.\nCordialement.';
+        var phone = normalizeSenegalPhone(c.phone);
         window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
     };
 
@@ -1889,7 +1940,7 @@
             return '<div class="history-item"><div><div class="h-desc" style="font-size:13px;">' + h.action + '</div><div class="h-date" style="font-size:10px;">' + h.timestamp + '</div></div><div class="h-amt" style="font-size:14px;">' + (h.val>0?'+'+h.val:h.val) + ' ج</div></div>'; 
         }).join('') || '<div style="text-align:center; padding:15px; color:#555; font-size:13px;">لا يوجد سجل مالي</div>';
 
-        var headerHtml = '<div class="m-head" style="margin-bottom: 15px;"><div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap: 10px;"><h2 style="font-size:24px; margin:0; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--gold);">' + c.name + '</h2><div style="display:flex; gap:12px;"><a href="tel:' + c.phone + '" style="color:var(--info); background:rgba(10,132,255,0.1); width:45px; height:45px; display:flex; align-items:center; justify-content:center; font-size:20px; border-radius:14px; text-decoration:none; box-shadow: 0 4px 10px rgba(10,132,255,0.3);"><i class="fas fa-phone-alt"></i></a><a href="https://wa.me/2' + c.phone + '" style="color:#25D366; background:rgba(37,211,102,0.1); width:45px; height:45px; display:flex; align-items:center; justify-content:center; font-size:24px; border-radius:14px; text-decoration:none; box-shadow: 0 4px 10px rgba(37,211,102,0.3);"><i class="fab fa-whatsapp"></i></a></div></div><div class="close-btn" onclick="closeModal(\'viewClientModal\')" style="width:40px; height:40px; font-size:18px; margin-right:10px;"><i class="fas fa-times"></i></div></div>';
+        var headerHtml = '<div class="m-head" style="margin-bottom: 15px;"><div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap: 10px;"><h2 style="font-size:24px; margin:0; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--gold);">' + c.name + '</h2><div style="display:flex; gap:12px;"><a href="tel:' + c.phone + '" style="color:var(--info); background:rgba(10,132,255,0.1); width:45px; height:45px; display:flex; align-items:center; justify-content:center; font-size:20px; border-radius:14px; text-decoration:none; box-shadow: 0 4px 10px rgba(10,132,255,0.3);"><i class="fas fa-phone-alt"></i></a><a href="https://wa.me/' + normalizeSenegalPhone(c.phone) + '" style="color:#25D366; background:rgba(37,211,102,0.1); width:45px; height:45px; display:flex; align-items:center; justify-content:center; font-size:24px; border-radius:14px; text-decoration:none; box-shadow: 0 4px 10px rgba(37,211,102,0.3);"><i class="fab fa-whatsapp"></i></a></div></div><div class="close-btn" onclick="closeModal(\'viewClientModal\')" style="width:40px; height:40px; font-size:18px; margin-right:10px;"><i class="fas fa-times"></i></div></div>';
         var innerDash = '<div style="background: linear-gradient(145deg, var(--surface), var(--bg)); border: 1px solid var(--gold); border-radius: 16px; padding: 15px; margin-bottom: 15px; font-size: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);"><div style="color:var(--text-muted);">📦 <span style="color:#fff; font-weight:bold;">' + cProduct + '</span></div><div style="color:var(--text-muted);">📍 <span style="color:#fff; font-weight:bold;">' + c.area + '</span></div><div style="grid-column: span 2; color:var(--text-muted); line-height:1.5;">📝 <span style="color:#fff;">' + cNotes + '</span></div><div style="color:var(--gold); font-weight:900; font-size:16px;">💰 إجمالي: ' + c.totalAmount.toLocaleString() + ' ج</div><div style="color:var(--info); font-weight:900; font-size:16px;">💸 قسط: ' + c.monthlyInstallment.toLocaleString() + ' ج</div><div style="color:var(--success); font-weight:bold;">✅ دُفع: ' + pdCount.length + ' شهر</div><div style="color:var(--danger); font-weight:bold;">⚠️ باقي: ' + remCount + ' (' + rem.toLocaleString() + ' ج)</div></div>';
 
         document.getElementById('view-dynamic-content').innerHTML = headerHtml + 
