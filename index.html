@@ -984,7 +984,7 @@
 
 <div id="upcomingClientsModal" class="modal-overlay" style="background: var(--bg); flex-direction: column; justify-content: flex-start;">
     <header style="padding: 15px; background: var(--surface); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border);">
-        <h2 style="font-size: 18px; color: #25D366; margin: 0;"><i class="fab fa-whatsapp"></i> تذكير المواعيد القادمة (خلال يومين)</h2>
+        <h2 style="font-size: 18px; color: #25D366; margin: 0;"><i class="fab fa-whatsapp"></i> تذكير المواعيد (اليوم - بكرة - بعد بكرة)</h2>
     </header>
     <main id="upcoming-clients-list" style="padding:15px;"></main>
     <div class="floating-back-btn" onclick="closeModal('upcomingClientsModal')"><i class="fas fa-arrow-right"></i></div>
@@ -1668,7 +1668,7 @@
             var dueDate = new Date(today.getFullYear(), today.getMonth(), c.collectionDay);
             dueDate.setHours(0,0,0,0);
             var diffDays = Math.round((dueDate - today) / 86400000);
-            return diffDays === 2;
+            return diffDays >= 0 && diffDays <= 2;
         });
     }
 
@@ -1681,7 +1681,11 @@
         } else {
             upcoming.forEach(function(c) {
                 var rem = c.totalAmount - c.paidAmount;
-                list.innerHTML += '<div class="client-card fade-in" style="margin-bottom:10px; border-right: 5px solid #25D366; position:relative; padding-left:50px;"><div class="c-info"><h3>' + c.name + '</h3><p>📍 ' + c.area + '</p><span class="c-badge" style="background:rgba(37,211,102,0.15); color:#25D366;">الموعد بعد يومين (يوم ' + c.collectionDay + ')</span></div><div class="c-financials"><span class="rem-amount">' + rem.toLocaleString() + ' ج</span></div><div onclick="sendUpcomingReminder(\'' + c.uuid + '\')" title="Envoyer un rappel WhatsApp" style="position:absolute; bottom:10px; left:10px; width:34px; height:34px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(37,211,102,0.4); z-index:2;"><i class="fab fa-whatsapp" style="color:#fff; font-size:17px;"></i></div></div>';
+                var today0 = new Date(); today0.setHours(0,0,0,0);
+                var dueDate0 = new Date(today0.getFullYear(), today0.getMonth(), c.collectionDay); dueDate0.setHours(0,0,0,0);
+                var diff = Math.round((dueDate0 - today0) / 86400000);
+                var diffLabel = diff === 0 ? 'اليوم' : (diff === 1 ? 'بكرة' : 'بعد بكرة');
+                list.innerHTML += '<div class="client-card fade-in" style="margin-bottom:10px; border-right: 5px solid #25D366; position:relative; padding-left:50px;"><div class="c-info"><h3>' + c.name + '</h3><p>📍 ' + c.area + '</p><span class="c-badge" style="background:rgba(37,211,102,0.15); color:#25D366;">الموعد ' + diffLabel + ' (يوم ' + c.collectionDay + ')</span></div><div class="c-financials"><span class="rem-amount">' + rem.toLocaleString() + ' ج</span></div><div onclick="sendUpcomingReminder(\'' + c.uuid + '\')" title="Envoyer un rappel WhatsApp" style="position:absolute; bottom:10px; left:10px; width:34px; height:34px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(37,211,102,0.4); z-index:2;"><i class="fab fa-whatsapp" style="color:#fff; font-size:17px;"></i></div></div>';
             });
         }
         openModal('upcomingClientsModal');
@@ -1690,10 +1694,13 @@
     window.sendUpcomingReminder = function(uuid) {
         var c = ClientsData.find(function(x){ return x.uuid === uuid; });
         if (!c) return;
-        var today = new Date();
+        var today = new Date(); today.setHours(0,0,0,0);
         var curM = today.getMonth() + 1;
         var monthNameFr = frMonths[curM - 1];
-        var msg = 'Bonjour ' + c.name + ',\nPetit rappel : votre échéance du mois de ' + monthNameFr + ' est prévue dans 2 jours (le ' + c.collectionDay + ').\nMerci de bien vouloir préparer le règlement.\nCordialement.';
+        var dueDate = new Date(today.getFullYear(), today.getMonth(), c.collectionDay); dueDate.setHours(0,0,0,0);
+        var diff = Math.round((dueDate - today) / 86400000);
+        var whenFr = diff === 0 ? "aujourd'hui" : (diff === 1 ? "demain" : "dans " + diff + " jours");
+        var msg = 'Bonjour ' + c.name + ',\nPetit rappel : votre échéance du mois de ' + monthNameFr + ' est prévue ' + whenFr + ' (le ' + c.collectionDay + ').\nMerci de bien vouloir préparer le règlement.\nCordialement.';
         var phone = normalizeSenegalPhone(c.phone);
         window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
     };
