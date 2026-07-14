@@ -482,7 +482,7 @@
         }
         .filter-select:active { transform: scale(0.95); }
         
-        #all-clients-container, #late-clients-list { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
+        #all-clients-container, #late-clients-list, #upcoming-clients-list { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
         
         /* =========================================
            تصميم كروت الزبائن
@@ -1679,13 +1679,14 @@
         if (upcoming.length === 0) {
             list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:bold;">مفيش مواعيد خلال اليومين الجايين حالياً.</div>';
         } else {
+            list.innerHTML = '<button class="btn btn-secondary" style="margin-bottom:12px; padding:12px; font-size:13px; color:#25D366; border-color:#25D366;" onclick="sendAllUpcomingReminders()"><i class="fab fa-whatsapp"></i> إرسال للكل بالترتيب (' + upcoming.length + ')</button>';
             upcoming.forEach(function(c) {
                 var rem = c.totalAmount - c.paidAmount;
                 var today0 = new Date(); today0.setHours(0,0,0,0);
                 var dueDate0 = new Date(today0.getFullYear(), today0.getMonth(), c.collectionDay); dueDate0.setHours(0,0,0,0);
                 var diff = Math.round((dueDate0 - today0) / 86400000);
                 var diffLabel = diff === 0 ? 'اليوم' : (diff === 1 ? 'بكرة' : 'بعد بكرة');
-                list.innerHTML += '<div class="client-card fade-in" style="margin-bottom:10px; border-right: 5px solid #25D366; position:relative; padding-left:50px;"><div class="c-info"><h3>' + c.name + '</h3><p>📍 ' + c.area + '</p><span class="c-badge" style="background:rgba(37,211,102,0.15); color:#25D366;">الموعد ' + diffLabel + ' (يوم ' + c.collectionDay + ')</span></div><div class="c-financials"><span class="rem-amount">' + rem.toLocaleString() + ' ج</span></div><div onclick="sendUpcomingReminder(\'' + c.uuid + '\')" title="Envoyer un rappel WhatsApp" style="position:absolute; bottom:10px; left:10px; width:34px; height:34px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(37,211,102,0.4); z-index:2;"><i class="fab fa-whatsapp" style="color:#fff; font-size:17px;"></i></div></div>';
+                list.innerHTML += '<div class="client-card fade-in" id="upcoming-card-' + c.uuid + '" style="margin-bottom:10px; border-right: 5px solid #25D366; position:relative; padding-left:50px;"><div class="c-info"><h3>' + c.name + '</h3><p>📍 ' + c.area + '</p><span class="c-badge" style="background:rgba(37,211,102,0.15); color:#25D366;">الموعد ' + diffLabel + ' (يوم ' + c.collectionDay + ')</span></div><div class="c-financials"><span class="rem-amount">' + rem.toLocaleString() + ' ج</span></div><div onclick="sendUpcomingReminder(\'' + c.uuid + '\')" title="Envoyer un rappel WhatsApp" style="position:absolute; bottom:10px; left:10px; width:34px; height:34px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(37,211,102,0.4); z-index:2;"><i class="fab fa-whatsapp" style="color:#fff; font-size:17px;"></i></div></div>';
             });
         }
         openModal('upcomingClientsModal');
@@ -1703,7 +1704,29 @@
         var msg = 'Bonjour ' + c.name + ',\nPetit rappel : votre échéance du mois de ' + monthNameFr + ' est prévue ' + whenFr + ' (le ' + c.collectionDay + ').\nMerci de bien vouloir préparer le règlement.\nCordialement.';
         var phone = normalizeSenegalPhone(c.phone);
         window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+        // نشيل البطاقة دي من القايمة بعد الإرسال عشان تعرف مين باقي محتاج ترسله
+        var cardEl = document.getElementById('upcoming-card-' + uuid);
+        if (cardEl) cardEl.remove();
     };
+
+    // إرسال بالترتيب للكل: بيفتح كل عميل في نافذة واحدة بعد الضغط على "التالي"
+    // (مش تلقائي بالكامل - واتساب نفسه بيمنع أي إرسال بدون ضغطة المستخدم على "إرسال" جوه المحادثة)
+    var sendAllQueue = [];
+    window.sendAllUpcomingReminders = function() {
+        sendAllQueue = getUpcomingClients().map(function(c){ return c.uuid; });
+        sendNextInQueue();
+    };
+    function sendNextInQueue() {
+        if (sendAllQueue.length === 0) {
+            triggerToast("تم فتح كل الرسائل ✅");
+            return;
+        }
+        var uuid = sendAllQueue.shift();
+        sendUpcomingReminder(uuid);
+        if (sendAllQueue.length > 0) {
+            triggerToast("ابعت الرسالة دي، وارجع دوس هنا تاني عشان اللي بعده");
+        }
+    }
 
     function showMonthStats(type) {
         currentMonthStatsType = type; 
