@@ -985,15 +985,9 @@
             <h2>إضافة زبون جديد</h2>
             <div class="close-btn" onclick="closeModal('addClientModal')"><i class="fas fa-times"></i></div>
         </div>
-
-        <div class="grid-2" style="margin-bottom:15px;">
-            <button type="button" class="btn btn-secondary" style="padding:14px; font-size:12px;" onclick="openContactsApp()"><i class="fas fa-address-book"></i> فتح جهات الاتصال</button>
-            <button type="button" class="btn btn-secondary" style="padding:14px; font-size:12px;" onclick="openUploadWhatsapp()"><i class="fab fa-whatsapp" style="color:#25D366;"></i> فتح واتساب</button>
-        </div>
-
         <div class="form-group">
             <label class="form-label">الاسم مثال ف1ص1</label>
-            <input type="text" id="add-name" class="form-input" autocomplete="name" name="fullname">
+            <input type="text" id="add-name" class="form-input">
         </div>
         <div class="grid-2">
             <div class="form-group">
@@ -1044,34 +1038,28 @@
         
         <div class="form-group" style="margin-top:15px;">
             <label class="form-label">الهاتف</label>
-            <input type="tel" id="add-phone" class="form-input" autocomplete="tel" name="phone">
+            <input type="tel" id="add-phone" class="form-input">
         </div>
         <div class="form-group">
             <label class="form-label">العنوان / ملاحظات</label>
             <textarea id="add-notes" class="form-input" rows="2" style="resize:none;" placeholder="اكتب العنوان بالتفصيل أو أي ملاحظة..."></textarea>
         </div>
         <div class="form-group">
-            <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
-                <span><i class="fas fa-link"></i> رابط الموقع الخارجي (اختياري)</span>
-                <span onclick="openUploadWhatsapp()" style="color:#25D366; font-size:10px; cursor:pointer;"><i class="fab fa-whatsapp"></i> واتساب</span>
-            </label>
+            <label class="form-label"><i class="fas fa-link"></i> رابط الموقع الخارجي (اختياري)</label>
             <input type="url" id="add-loc-link" class="form-input" placeholder="انسخ رابط جوجل ماب هنا...">
         </div>
 
         <div class="media-grid" style="grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
             <div class="media-box" id="btn-gps" onclick="startFastLocationTracking()">
-                <div onclick="event.stopPropagation(); openUploadWhatsapp()" style="position:absolute; top:5px; left:5px; z-index:3; width:22px; height:22px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fab fa-whatsapp" style="font-size:12px; color:#fff; margin:0;"></i></div>
                 <i class="fas fa-map-marker-alt"></i>
                 <span>تثبيت الموقع</span>
             </div>
             <div class="media-box" onclick="captureImage('hm')">
-                <div onclick="event.stopPropagation(); openUploadWhatsapp()" style="position:absolute; top:5px; left:5px; z-index:3; width:22px; height:22px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fab fa-whatsapp" style="font-size:12px; color:#fff; margin:0;"></i></div>
                 <i class="fas fa-home"></i>
                 <span>المنزل</span>
                 <img id="img-hm">
             </div>
             <div class="media-box" onclick="captureImage('ct')">
-                <div onclick="event.stopPropagation(); openUploadWhatsapp()" style="position:absolute; top:5px; left:5px; z-index:3; width:22px; height:22px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fab fa-whatsapp" style="font-size:12px; color:#fff; margin:0;"></i></div>
                 <i class="fas fa-file-signature"></i>
                 <span>العقد</span>
                 <img id="img-ct">
@@ -1628,7 +1616,7 @@
                 if(match) {
                     count++; 
                     var bHtml = '<span class="c-badge badge-red">' + (hasCarry ? c.statusMsg : 'متأخر ⚠️') + '</span>';
-                    list.innerHTML += '<div class="client-card fade-in" style="margin-bottom:10px; border-right: 5px solid var(--danger);" onclick="closeModal(\'lateClientsModal\'); openClientDetails(\'' + c.uuid + '\'); setTimeout(function(){ showMonthBox(\'' + c.uuid + '\', ' + targetMonth + '); }, 400);"><div class="c-info"><h3>' + c.name + '</h3><p>📍 ' + c.area + '</p>' + bHtml + '</div><div class="c-financials"><span class="rem-amount">' + rem.toLocaleString() + ' ج</span><div style="font-size:10px; color:#555;">يوم ' + c.collectionDay + '</div></div></div>';
+                    list.innerHTML += '<div class="client-card fade-in" style="margin-bottom:10px; border-right: 5px solid var(--danger); position:relative; padding-left:50px;" onclick="closeModal(\'lateClientsModal\'); openClientDetails(\'' + c.uuid + '\'); setTimeout(function(){ showMonthBox(\'' + c.uuid + '\', ' + targetMonth + '); }, 400);"><div class="c-info"><h3>' + c.name + '</h3><p>📍 ' + c.area + '</p>' + bHtml + '</div><div class="c-financials"><span class="rem-amount">' + rem.toLocaleString() + ' ج</span><div style="font-size:10px; color:#555;">يوم ' + c.collectionDay + '</div></div><div onclick="event.stopPropagation(); sendLateReminder(\'' + c.uuid + '\')" title="ابعت تذكير واتساب" style="position:absolute; bottom:10px; left:10px; width:34px; height:34px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(37,211,102,0.4); z-index:2;"><i class="fab fa-whatsapp" style="color:#fff; font-size:17px;"></i></div></div>';
                 }
             }
         });
@@ -1641,6 +1629,22 @@
             }); 
             syncSelectDisplay('late-flt-day'); 
         }
+    };
+
+    // ==================================================================
+    // ميزة: إرسال رسالة تذكير جاهزة عبر واتساب للعميل المتأخر
+    // بيستخدم رابط wa.me الرسمي مع نص جاهز (?text=) وده مدعوم ورسمي 100%
+    // ==================================================================
+    window.sendLateReminder = function(uuid) {
+        var c = ClientsData.find(function(x){ return x.uuid === uuid; });
+        if (!c) return;
+        var rem = c.totalAmount - c.paidAmount;
+        var lateMonths = c.planMonths.filter(function(m){ return c.paidMonthsLog.indexOf(m) === -1; });
+        var monthName = lateMonths.length > 0 ? arMonths[lateMonths[0] - 1] : '';
+        var msg = 'السلام عليكم أ/' + c.name + '،\nتذكير بخصوص قسط شهر ' + monthName + '.\nالمبلغ المتبقي: ' + rem.toLocaleString() + ' جنيه.\nبرجاء السداد في أقرب وقت ممكن، وشكراً لتعاملكم معنا 🙏';
+        var phone = (c.phone || '').replace(/[^0-9]/g, '');
+        if (phone.startsWith('0')) phone = '2' + phone; else if (!phone.startsWith('20')) phone = '20' + phone;
+        window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
     };
 
     function showMonthStats(type) {
@@ -2256,34 +2260,6 @@
             if(icon) icon.classList.remove('fa-spin');
             triggerToast("حدث خطأ أثناء المزامنة اللحظية", "error");
         }
-    };
-
-    // ==================================================================
-    // ميزة: زر يفتح تطبيق جهات الاتصال مباشرة على آيفون
-    // ملحوظة مهمة: آبل لا تسمح لأي صفحة ويب (سواء Safari أو Chrome) بإرجاع
-    // بيانات جهة الاتصال المختارة تلقائياً للموقع - ده تقييد نظام من آبل نفسها
-    // ومفيش أي كود ممكن يتخطاه. اللي ممكن نعمله فعلياً هو إننا نفتحلك تطبيق
-    // جهات الاتصال على طول، وبعد كده تدور على الزبون وتكتب اسمه ورقمه يدوياً هنا.
-    // ==================================================================
-    window.openContactsApp = function() {
-        window.location.href = 'contacts://';
-        // بعض الأجهزة ما بتفتحش تطبيق جهات الاتصال مباشرة من المتصفح لنفس سبب الخصوصية،
-        // فلو الرابط ما اشتغلش نوضح للمستخدم يفتحه يدوياً
-        setTimeout(function() {
-            triggerToast("لو التطبيق مفتحش لوحده، افتح تطبيق (جهات الاتصال) من شاشة هاتفك مباشرة");
-        }, 800);
-    };
-
-    // ==================================================================
-    // ميزة: زر يفتح تطبيق واتساب نفسه (شاشة المحادثات) عشان تختار المحادثة
-    // اللي فيها صور البيت والفاتورة واللوكيشن بنفسك، بدل الاعتماد على رقم
-    // ثابت كان بيسبب مشاكل في فتح الرابط.
-    // ==================================================================
-    window.openUploadWhatsapp = function() {
-        window.location.href = 'whatsapp://';
-        setTimeout(function() {
-            triggerToast("لو التطبيق مفتحش لوحده، افتح واتساب من شاشة هاتفك مباشرة");
-        }, 800);
     };
 </script>
 
