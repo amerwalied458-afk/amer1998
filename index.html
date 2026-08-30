@@ -464,6 +464,54 @@
         .dash-card span { font-size: 10px; color: var(--text-muted); font-weight: 700; }
         .dash-card b { font-size: 15px; display: block; margin-top: 2px; font-weight: 900; }
 
+        /* ستاتس شكل الألعاب */
+        .stats-game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 15px; margin-top: 14px; }
+        .stat-game-card {
+            border-radius: 16px;
+            padding: 12px 5px 9px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.15s;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+        .stat-game-card:active { transform: scale(0.95); }
+        .stat-game-card.c-gold { background: linear-gradient(160deg, #4a3a12, #201705); }
+        .stat-game-card.c-info { background: linear-gradient(160deg, #123a5e, #0a1a2e); }
+        .stat-game-card.c-success { background: linear-gradient(160deg, #164a2b, #0a2013); }
+        .stat-game-card.c-purple { background: linear-gradient(160deg, #3a1a5e, #190a2e); }
+        .stat-game-icon {
+            width: 38px; height: 38px; margin: 0 auto 7px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.35), rgba(255,255,255,0.05));
+            box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.5);
+        }
+        .stat-game-card.c-gold .stat-game-icon { color: #ffd75e; }
+        .stat-game-card.c-info .stat-game-icon { color: #6cc3ff; }
+        .stat-game-card.c-success .stat-game-icon { color: #6dffa0; }
+        .stat-game-card.c-purple .stat-game-icon { color: #d59bff; }
+        .stat-game-value { font-size: 16px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+        .stat-game-label { font-size: 9.5px; color: rgba(255,255,255,0.75); font-weight: 700; margin-top: 2px; display: block; }
+
+        /* أزرار الرئيسية بشكل ثلاثي الأبعاد */
+        .home-action-btn {
+            flex: 1; padding: 14px 8px; border-radius: 15px; font-weight: 900; font-size: 14px;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px;
+            border: none; transition: transform 0.1s; color: #1a1200;
+        }
+        .home-action-btn:active { transform: scale(0.96); }
+        .home-action-btn.gold-3d {
+            background: linear-gradient(180deg, #f5d774, var(--gold) 55%, #a4791f);
+            box-shadow: 0 4px 0 #7a5a15, 0 6px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.6);
+        }
+        .home-action-btn.red-3d {
+            background: linear-gradient(180deg, #ff8f87, var(--danger) 55%, #a8241c);
+            color: #2a0000;
+            box-shadow: 0 4px 0 #7a1a15, 0 6px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.6);
+        }
+
         /* =========================================
            تصميم الأذكار والبرواز المزخرف (احترافي ومريح للعين)
            ========================================= */
@@ -968,8 +1016,8 @@
             </div>
         </div>
         <div style="display: flex; gap: 10px;">
-            <button onclick="openAllClients()" style="flex:1; padding:15px; border-radius:15px; background:rgba(212,175,55,0.15); border:1px solid var(--gold); color:var(--gold); font-weight:900; font-size:15px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px; box-shadow: 0 4px 15px rgba(212,175,55,0.1); transition: transform 0.1s;"><i class="fas fa-users"></i> كل الزبائن</button>
-            <button onclick="openLateClientsModal()" style="flex:1; padding:15px; border-radius:15px; background:rgba(255,69,58,0.15); border:1px solid var(--danger); color:var(--danger); font-weight:900; font-size:15px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:5px; box-shadow: 0 4px 15px rgba(255,69,58,0.1); transition: transform 0.1s;"><i class="fas fa-exclamation-triangle"></i> المتأخرات</button>
+            <button onclick="openAllClients()" class="home-action-btn gold-3d"><i class="fas fa-users"></i> كل الزبائن</button>
+            <button onclick="openLateClientsModal()" class="home-action-btn red-3d"><i class="fas fa-exclamation-triangle"></i> المتأخرات</button>
         </div>
     </header>
 
@@ -978,9 +1026,32 @@
         <span id="dynamic-dhikr">هل صليت علي النبي اليوم؟</span>
     </div>
 
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.15;">
-        <i class="fas fa-shield-alt" style="font-size: 80px; color: var(--gold); margin-bottom: 15px;"></i>
-        <h2 style="font-size: 20px; font-weight: 900; letter-spacing: 2px;">نظام عامر</h2>
+    <div class="stats-game-grid">
+        <div class="stat-game-card c-gold" onclick="triggerToast('أعلى منطقة في التحصيل هذا الشهر')">
+            <div class="stat-game-icon"><i class="fas fa-trophy"></i></div>
+            <b class="stat-game-value" id="stat-top-area">-</b>
+            <span class="stat-game-label">أعلى منطقة</span>
+        </div>
+        <div class="stat-game-card c-info" onclick="triggerToast('متوسط القسط الشهري لكل الزبائن')">
+            <div class="stat-game-icon"><i class="fas fa-coins"></i></div>
+            <b class="stat-game-value" id="stat-avg-installment">0</b>
+            <span class="stat-game-label">متوسط القسط</span>
+        </div>
+        <div class="stat-game-card c-success" onclick="triggerToast('الزبائن اللي خلصوا كل أقساطهم')">
+            <div class="stat-game-icon"><i class="fas fa-check-circle"></i></div>
+            <b class="stat-game-value" id="stat-fully-paid">0</b>
+            <span class="stat-game-label">مخلصين بالكامل</span>
+        </div>
+        <div class="stat-game-card c-purple" onclick="triggerToast('الزبائن المطلوب تحصيلهم النهاردة')">
+            <div class="stat-game-icon"><i class="fas fa-calendar-day"></i></div>
+            <b class="stat-game-value" id="stat-today-due">0</b>
+            <span class="stat-game-label">تحصيلات اليوم</span>
+        </div>
+    </div>
+
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.1;">
+        <i class="fas fa-shield-alt" style="font-size: 60px; color: var(--gold); margin-bottom: 10px;"></i>
+        <h2 style="font-size: 16px; font-weight: 900; letter-spacing: 2px;">نظام عامر</h2>
     </div>
 
     <nav class="bottom-nav">
@@ -1642,6 +1713,55 @@
         document.getElementById('dash-expected-month').innerText = mStats.exp.toLocaleString() + " ج"; 
         document.getElementById('dash-collected-month').innerText = mStats.col.toLocaleString() + " ج"; 
         document.getElementById('dash-remaining-month').innerText = mStats.rem.toLocaleString() + " ج";
+
+        updateGameStats(mStats);
+    }
+
+    function updateGameStats(mStats) {
+        var topAreaEl = document.getElementById('stat-top-area');
+        var avgEl = document.getElementById('stat-avg-installment');
+        var fullyPaidEl = document.getElementById('stat-fully-paid');
+        var todayDueEl = document.getElementById('stat-today-due');
+        if (!topAreaEl) return;
+
+        var curM = new Date().getMonth() + 1;
+        var curD = new Date().getDate();
+        var areaTotals = {};
+        var installmentSum = 0;
+        var fullyPaidCount = 0;
+        var todayDueCount = 0;
+
+        ClientsData.forEach(function(c) {
+            var mInst = Number(c.monthlyInstallment) || 0;
+            installmentSum += mInst;
+
+            var pMonths = Array.isArray(c.planMonths) ? c.planMonths : [];
+            var pdLog = Array.isArray(c.paidMonthsLog) ? c.paidMonthsLog : [];
+
+            if (c.area && pdLog.indexOf(curM) !== -1) {
+                areaTotals[c.area] = (areaTotals[c.area] || 0) + mInst;
+            }
+
+            var totalRemaining = (pMonths.length * mInst) - (Number(c.paidAmount) || 0);
+            if (pMonths.length > 0 && totalRemaining <= 0) fullyPaidCount++;
+
+            if (pMonths.indexOf(curM) !== -1 && pdLog.indexOf(curM) === -1 && c.collectionDay === curD) {
+                todayDueCount++;
+            }
+        });
+
+        var topArea = "-";
+        var topVal = 0;
+        Object.keys(areaTotals).forEach(function(a) {
+            if (areaTotals[a] > topVal) { topVal = areaTotals[a]; topArea = a; }
+        });
+
+        var avgInstallment = ClientsData.length > 0 ? Math.round(installmentSum / ClientsData.length) : 0;
+
+        topAreaEl.innerText = topArea;
+        avgEl.innerText = avgInstallment.toLocaleString();
+        fullyPaidEl.innerText = fullyPaidCount;
+        todayDueEl.innerText = todayDueCount;
     }
 
     function openLateClientsModal() {
