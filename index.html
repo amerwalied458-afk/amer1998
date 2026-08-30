@@ -464,53 +464,167 @@
         .dash-card span { font-size: 10px; color: var(--text-muted); font-weight: 700; }
         .dash-card b { font-size: 15px; display: block; margin-top: 2px; font-weight: 900; }
 
-        /* ستاتس شكل الألعاب */
+        /* ============ ثيم الشاشة الرئيسية (أزرق/ذهبي على طراز الألعاب) ============ */
+        #app-core {
+            background:
+                radial-gradient(circle at 50% -15%, #3d76c4 0%, #1e4a86 22%, #123561 42%, #0a1e3d 65%, #050f22 100%);
+        }
+        #app-core .home-header {
+            background: rgba(6, 16, 34, 0.35);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        #app-core .title-area h2 { color: #ffd75e; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+        #app-core .icon-btn {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.25);
+        }
+
+        /* بطاقة البطل (ملخص الشهر) */
+        .home-hero-card {
+            display: flex; align-items: center; gap: 12px;
+            background: linear-gradient(135deg, #2f6bb8, #133a6b);
+            border: 1px solid rgba(255,215,94,0.35);
+            border-radius: 18px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+            position: relative; overflow: hidden;
+        }
+        .home-hero-card::after {
+            content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.18), transparent);
+            transform: skewX(-20deg);
+            animation: statShine 5s ease-in-out infinite;
+        }
+        .home-hero-icon {
+            flex-shrink: 0;
+            width: 46px; height: 46px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 19px; color: #ffd75e;
+            background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.35), rgba(255,255,255,0.05));
+            border: 2px solid #ffd75e;
+            box-shadow: 0 3px 10px rgba(255,215,94,0.4), inset 0 1px 2px rgba(255,255,255,0.5);
+        }
+        .home-hero-info { flex: 1; min-width: 0; }
+        .home-hero-label { font-size: 10.5px; color: rgba(255,255,255,0.75); font-weight: 700; display: block; }
+        .home-hero-value { font-size: 19px; font-weight: 900; color: #fff; display: block; margin: 2px 0 6px; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+        .home-hero-progress { height: 6px; border-radius: 4px; background: rgba(0,0,0,0.35); overflow: hidden; }
+        .home-hero-progress-fill { height: 100%; width: 0%; border-radius: 4px; background: linear-gradient(90deg, #32d74b, #7dffa0); transition: width 0.6s ease; }
+
+        /* صناديق الإنجازات (زي صناديق اللعبة تمامًا) */
+        .achieve-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
         .stats-game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 15px; margin-top: 14px; }
-        .stat-game-card {
+
+        .achieve-box, .stat-game-card {
+            position: relative;
             border-radius: 16px;
-            padding: 12px 5px 9px;
+            padding: 10px 6px 11px;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.15s;
-            border: 1px solid rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.14);
             box-shadow: 0 6px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(14px) scale(0.9);
+            animation: statCardEnter 0.55s cubic-bezier(.2,.9,.3,1.3) forwards;
+            transition: transform 0.15s, box-shadow 0.2s;
         }
-        .stat-game-card:active { transform: scale(0.95); }
-        .stat-game-card.c-gold { background: linear-gradient(160deg, #4a3a12, #201705); }
-        .stat-game-card.c-info { background: linear-gradient(160deg, #123a5e, #0a1a2e); }
-        .stat-game-card.c-success { background: linear-gradient(160deg, #164a2b, #0a2013); }
-        .stat-game-card.c-purple { background: linear-gradient(160deg, #3a1a5e, #190a2e); }
-        .stat-game-icon {
-            width: 38px; height: 38px; margin: 0 auto 7px;
+        .achieve-row .achieve-box:nth-child(1) { animation-delay: 0.05s; }
+        .achieve-row .achieve-box:nth-child(2) { animation-delay: 0.15s; }
+        .stat-game-card:nth-child(1) { animation-delay: 0.25s; }
+        .stat-game-card:nth-child(2) { animation-delay: 0.32s; }
+        .stat-game-card:nth-child(3) { animation-delay: 0.39s; }
+        .stat-game-card:nth-child(4) { animation-delay: 0.46s; }
+        @keyframes statCardEnter {
+            0% { opacity: 0; transform: translateY(14px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .achieve-box::after, .stat-game-card::after {
+            content: '';
+            position: absolute; top: 0; left: -60%;
+            width: 40%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent);
+            transform: skewX(-20deg);
+            animation: statShine 4.5s ease-in-out infinite;
+        }
+        @keyframes statShine {
+            0%, 25% { left: -60%; }
+            50%, 100% { left: 130%; }
+        }
+        .achieve-box:active, .stat-game-card:active { transform: scale(0.95) !important; }
+
+        .achieve-box.c-success, .stat-game-card.c-success { background: linear-gradient(160deg, #1c5c37, #0d2818); }
+        .achieve-box.c-danger, .stat-game-card.c-danger { background: linear-gradient(160deg, #6e2420, #300f0d); }
+        .stat-game-card.c-gold { background: linear-gradient(160deg, #6b551c, #2c2107); }
+        .stat-game-card.c-info { background: linear-gradient(160deg, #1a4c7c, #0b243f); }
+        .stat-game-card.c-purple { background: linear-gradient(160deg, #542888, #240f3d); }
+
+        .achieve-label, .stat-game-label-top { font-size: 10px; color: rgba(255,255,255,0.75); font-weight: 700; display: block; }
+        .achieve-value, .stat-game-value { font-size: 17px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.4); display: block; margin: 4px 0; }
+
+        .achieve-icon, .stat-game-icon {
+            width: 34px; height: 34px; margin: 4px auto 0;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
+            font-size: 15px;
             background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.35), rgba(255,255,255,0.05));
-            box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.5);
+            animation: statIconPulse 2.6s ease-in-out infinite;
         }
+        .achieve-box.c-success .achieve-icon, .stat-game-card.c-success .stat-game-icon { color: #6dffa0; }
+        .achieve-box.c-danger .achieve-icon, .stat-game-card.c-danger .stat-game-icon { color: #ff9a94; }
         .stat-game-card.c-gold .stat-game-icon { color: #ffd75e; }
         .stat-game-card.c-info .stat-game-icon { color: #6cc3ff; }
-        .stat-game-card.c-success .stat-game-icon { color: #6dffa0; }
         .stat-game-card.c-purple .stat-game-icon { color: #d59bff; }
-        .stat-game-value { font-size: 16px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+        @keyframes statIconPulse {
+            0%, 100% { box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.5), 0 0 0 0 rgba(255,255,255,0.3); }
+            50% { box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.5), 0 0 8px 3px rgba(255,255,255,0.25); }
+        }
+
         .stat-game-label { font-size: 9.5px; color: rgba(255,255,255,0.75); font-weight: 700; margin-top: 2px; display: block; }
 
-        /* أزرار الرئيسية بشكل ثلاثي الأبعاد */
-        .home-action-btn {
-            flex: 1; padding: 14px 8px; border-radius: 15px; font-weight: 900; font-size: 14px;
-            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px;
-            border: none; transition: transform 0.1s; color: #1a1200;
+        /* أزرار بانر الرئيسية (زي بانرات اللعبة) */
+        .home-banner-row { display: flex; gap: 10px; }
+        .home-banner-btn {
+            flex: 1; padding: 12px 12px; border-radius: 16px; font-weight: 900; font-size: 13.5px;
+            cursor: pointer; display: flex; justify-content: flex-start; align-items: center; gap: 10px;
+            border: 1px solid rgba(255,255,255,0.2); transition: transform 0.1s, box-shadow 0.15s; color: #fff;
+            position: relative; overflow: hidden;
         }
-        .home-action-btn:active { transform: scale(0.96); }
-        .home-action-btn.gold-3d {
-            background: linear-gradient(180deg, #f5d774, var(--gold) 55%, #a4791f);
-            box-shadow: 0 4px 0 #7a5a15, 0 6px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.6);
+        .home-banner-btn:active { transform: translateY(2px) scale(0.98); }
+        .home-banner-btn::after {
+            content: '';
+            position: absolute; top: 0; left: -75%;
+            width: 50%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg);
+            animation: btnShine 3.2s ease-in-out infinite;
         }
-        .home-action-btn.red-3d {
-            background: linear-gradient(180deg, #ff8f87, var(--danger) 55%, #a8241c);
-            color: #2a0000;
-            box-shadow: 0 4px 0 #7a1a15, 0 6px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.6);
+        .home-banner-btn.banner-red::after { animation-delay: 1.6s; }
+        @keyframes btnShine {
+            0%, 20% { left: -75%; }
+            55%, 100% { left: 130%; }
         }
+        .home-banner-icon {
+            width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 15px;
+            background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.5), rgba(255,255,255,0.1));
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.6);
+        }
+        .home-banner-btn.banner-gold {
+            background: linear-gradient(135deg, #f5c542, #a4791f);
+            box-shadow: 0 4px 0 #7a5a15, 0 6px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+        }
+        .home-banner-btn.banner-gold .home-banner-icon { color: #a4791f; }
+        .home-banner-btn.banner-gold:active { box-shadow: 0 2px 0 #7a5a15, 0 3px 6px rgba(0,0,0,0.4); }
+        .home-banner-btn.banner-red {
+            background: linear-gradient(135deg, #ff6b62, #a8241c);
+            box-shadow: 0 4px 0 #7a1a15, 0 6px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+        }
+        .home-banner-btn.banner-red .home-banner-icon { color: #a8241c; }
+        .home-banner-btn.banner-red:active { box-shadow: 0 2px 0 #7a1a15, 0 3px 6px rgba(0,0,0,0.4); }
+
 
         /* =========================================
            تصميم الأذكار والبرواز المزخرف (احترافي ومريح للعين)
@@ -991,33 +1105,44 @@
 </div>
 
 <div id="app-core">
-    <header>
+    <header class="home-header">
         <div class="top-bar">
             <div class="title-area">
                 <h2>الرئيسية</h2>
                 <span>AMER V20.0</span>
             </div>
             <div class="header-actions">
-                <button class="icon-btn" onclick="forceUpdateApp()" style="color: var(--success); border-color: var(--success); background: rgba(50, 215, 75, 0.1);" title="تحديث التطبيق والبيانات"><i class="fas fa-sync-alt"></i></button>
-                <button class="icon-btn" onclick="openAdminPrompt()" style="color: #fff; border-color: var(--gold); background: rgba(212, 175, 55, 0.2);" title="لوحة الإدارة"><i class="fas fa-user-shield"></i></button>
-                <button class="icon-btn" onclick="logoutGoogle()" style="color: var(--danger); border-color: var(--danger); background: rgba(255, 69, 58, 0.1);" title="تسجيل الخروج من جوجل"><i class="fas fa-sign-out-alt"></i></button>
+                <button class="icon-btn" onclick="forceUpdateApp()" style="color: var(--success); border-color: var(--success);" title="تحديث التطبيق والبيانات"><i class="fas fa-sync-alt"></i></button>
+                <button class="icon-btn" onclick="openAdminPrompt()" style="color: #ffd75e; border-color: var(--gold);" title="لوحة الإدارة"><i class="fas fa-user-shield"></i></button>
+                <button class="icon-btn" onclick="logoutGoogle()" style="color: var(--danger); border-color: var(--danger);" title="تسجيل الخروج من جوجل"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
-        <div class="dash-card" style="border-left-color: var(--info); display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 8px 12px;">
-            <span style="font-size: 11px;">إجمالي مال الشهر للجميع:</span>
-            <b id="dash-expected-month" style="color: var(--info); font-size: 16px; margin: 0;">0 ج</b>
-        </div>
-        <div class="dashboard-grid" style="margin-bottom: 15px;">
-            <div class="dash-card" style="border-left-color: var(--success);" onclick="showMonthStats('collected')">
-                <span>محصل الشهر</span><b id="dash-collected-month" style="color: var(--success);">0 ج</b>
-            </div>
-            <div class="dash-card danger" onclick="showMonthStats('remaining')">
-                <span>متبقي الشهر</span><b id="dash-remaining-month">0 ج</b>
+
+        <div class="home-hero-card">
+            <div class="home-hero-icon"><i class="fas fa-sack-dollar"></i></div>
+            <div class="home-hero-info">
+                <span class="home-hero-label">إجمالي مال الشهر للجميع</span>
+                <b id="dash-expected-month" class="home-hero-value">0 ج</b>
+                <div class="home-hero-progress"><div class="home-hero-progress-fill" id="dash-month-progress-fill"></div></div>
             </div>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button onclick="openAllClients()" class="home-action-btn gold-3d"><i class="fas fa-users"></i> كل الزبائن</button>
-            <button onclick="openLateClientsModal()" class="home-action-btn red-3d"><i class="fas fa-exclamation-triangle"></i> المتأخرات</button>
+
+        <div class="achieve-row">
+            <div class="achieve-box c-success" onclick="showMonthStats('collected')">
+                <span class="achieve-label">محصل الشهر</span>
+                <b class="achieve-value" id="dash-collected-month">0 ج</b>
+                <div class="achieve-icon"><i class="fas fa-hand-holding-dollar"></i></div>
+            </div>
+            <div class="achieve-box c-danger" onclick="showMonthStats('remaining')">
+                <span class="achieve-label">متبقي الشهر</span>
+                <b class="achieve-value" id="dash-remaining-month">0 ج</b>
+                <div class="achieve-icon"><i class="fas fa-hourglass-half"></i></div>
+            </div>
+        </div>
+
+        <div class="home-banner-row">
+            <button onclick="openAllClients()" class="home-banner-btn banner-gold"><div class="home-banner-icon"><i class="fas fa-users"></i></div> كل الزبائن</button>
+            <button onclick="openLateClientsModal()" class="home-banner-btn banner-red"><div class="home-banner-icon"><i class="fas fa-exclamation-triangle"></i></div> المتأخرات</button>
         </div>
     </header>
 
@@ -1028,30 +1153,30 @@
 
     <div class="stats-game-grid">
         <div class="stat-game-card c-gold" onclick="triggerToast('أعلى منطقة في التحصيل هذا الشهر')">
-            <div class="stat-game-icon"><i class="fas fa-trophy"></i></div>
-            <b class="stat-game-value" id="stat-top-area">-</b>
             <span class="stat-game-label">أعلى منطقة</span>
+            <b class="stat-game-value" id="stat-top-area">-</b>
+            <div class="stat-game-icon"><i class="fas fa-trophy"></i></div>
         </div>
         <div class="stat-game-card c-info" onclick="triggerToast('متوسط القسط الشهري لكل الزبائن')">
-            <div class="stat-game-icon"><i class="fas fa-coins"></i></div>
-            <b class="stat-game-value" id="stat-avg-installment">0</b>
             <span class="stat-game-label">متوسط القسط</span>
+            <b class="stat-game-value" id="stat-avg-installment">0</b>
+            <div class="stat-game-icon"><i class="fas fa-coins"></i></div>
         </div>
         <div class="stat-game-card c-success" onclick="triggerToast('الزبائن اللي خلصوا كل أقساطهم')">
-            <div class="stat-game-icon"><i class="fas fa-check-circle"></i></div>
-            <b class="stat-game-value" id="stat-fully-paid">0</b>
             <span class="stat-game-label">مخلصين بالكامل</span>
+            <b class="stat-game-value" id="stat-fully-paid">0</b>
+            <div class="stat-game-icon"><i class="fas fa-check-circle"></i></div>
         </div>
         <div class="stat-game-card c-purple" onclick="triggerToast('الزبائن المطلوب تحصيلهم النهاردة')">
-            <div class="stat-game-icon"><i class="fas fa-calendar-day"></i></div>
-            <b class="stat-game-value" id="stat-today-due">0</b>
             <span class="stat-game-label">تحصيلات اليوم</span>
+            <b class="stat-game-value" id="stat-today-due">0</b>
+            <div class="stat-game-icon"><i class="fas fa-calendar-day"></i></div>
         </div>
     </div>
 
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.1;">
-        <i class="fas fa-shield-alt" style="font-size: 60px; color: var(--gold); margin-bottom: 10px;"></i>
-        <h2 style="font-size: 16px; font-weight: 900; letter-spacing: 2px;">نظام عامر</h2>
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.12;">
+        <i class="fas fa-shield-alt" style="font-size: 60px; color: #ffd75e; margin-bottom: 10px;"></i>
+        <h2 style="font-size: 16px; font-weight: 900; letter-spacing: 2px; color: #fff;">نظام عامر</h2>
     </div>
 
     <nav class="bottom-nav">
@@ -1714,6 +1839,12 @@
         document.getElementById('dash-collected-month').innerText = mStats.col.toLocaleString() + " ج"; 
         document.getElementById('dash-remaining-month').innerText = mStats.rem.toLocaleString() + " ج";
 
+        var progressFillEl = document.getElementById('dash-month-progress-fill');
+        if (progressFillEl) {
+            var pct = mStats.exp > 0 ? Math.min(100, Math.round((mStats.col / mStats.exp) * 100)) : 0;
+            progressFillEl.style.width = pct + "%";
+        }
+
         updateGameStats(mStats);
     }
 
@@ -1759,9 +1890,23 @@
         var avgInstallment = ClientsData.length > 0 ? Math.round(installmentSum / ClientsData.length) : 0;
 
         topAreaEl.innerText = topArea;
-        avgEl.innerText = avgInstallment.toLocaleString();
-        fullyPaidEl.innerText = fullyPaidCount;
-        todayDueEl.innerText = todayDueCount;
+        animateCountUp(avgEl, avgInstallment, true);
+        animateCountUp(fullyPaidEl, fullyPaidCount, false);
+        animateCountUp(todayDueEl, todayDueCount, false);
+    }
+
+    function animateCountUp(el, target, useComma) {
+        var start = 0;
+        var duration = 700;
+        var startTime = null;
+        function step(ts) {
+            if (!startTime) startTime = ts;
+            var progress = Math.min((ts - startTime) / duration, 1);
+            var current = Math.round(start + (target - start) * progress);
+            el.innerText = useComma ? current.toLocaleString() : current;
+            if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
     }
 
     function openLateClientsModal() {
